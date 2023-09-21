@@ -1,6 +1,6 @@
 import logging
-import os
 import re
+import asyncio
 from aiohttp import web
 
 from .server_base import BasicServer
@@ -180,11 +180,28 @@ class GameServer(BasicServer):
         """Get the routes for the http server"""
 
         async def handle_index_page(request):
-            return web.FileResponse(os.path.join(self.clientdir, 'index.html'))
+            return web.FileResponse(self.clientdir / 'index.html')
 
         return [
             web.get(
                 '/', handle_index_page),
             web.static(
-                '/static', os.path.join(self.clientdir, 'static')),
+                '/static', self.clientdir / 'static'),
         ]
+
+    # Gameloop
+
+    async def tick(self, ticknum):
+        ...
+
+    async def gameloop(self):
+        """The main game loop"""
+
+        ticknum = 0
+
+        while True:
+            await asyncio.gather(
+                asyncio.sleep(1/10),
+                self.tick(ticknum=ticknum),
+            )
+            ticknum += 1

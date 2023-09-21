@@ -2,8 +2,8 @@
 
 import logging
 import sys
-import os.path
 import asyncio
+from pathlib import Path
 
 from connect4server.server_game import GameServer
 from connect4server.ngrok_helpers import NgrokTunnel, is_ngrok_available
@@ -31,8 +31,7 @@ def main(*args, **kwargs):
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
 
-    clientdir = os.path.join(os.path.dirname(
-        os.path.dirname(__file__)), 'client')
+    clientdir = Path(__file__).parent / 'connect4webclient'
 
     if len(sys.argv) > 1 and "--no-ngrok" in sys.argv:
         log.info("[Server] Starting server without ngrok tunnel.")
