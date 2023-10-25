@@ -2,9 +2,9 @@ import logging
 import asyncio
 from aiohttp import web
 
-from server_base import BasicServer
-from player import Player
-from game import Game
+from connect4server.server_base import BasicServer
+from connect4server.player import Player
+from connect4server.game import Game
 
 log = logging.getLogger()
 
