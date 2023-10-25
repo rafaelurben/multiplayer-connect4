@@ -7,3 +7,4 @@ This project contains parts of [rafaelurben/multiplayergame](https://github.com/
 ## Table of Contents
 
 - [Connection flow](connection.md)
+- [Action list](action-list.md)

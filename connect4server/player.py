@@ -25,7 +25,6 @@ class Player:
         return {
             "name": self.name,
             "id": self.playerid,
-            "gameid": self.gameid,
         }
 
     def delete(self):

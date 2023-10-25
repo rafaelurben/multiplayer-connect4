@@ -22,21 +22,37 @@ class GameServer(BasicServer):
         super().__init__()
 
     async def create_games(self):
+        """Called after a player joins or a game ends."""
+
         print("Creating games if there are enough players...")
 
-        # TODO
+        players = list(filter(lambda p: not p.is_in_game(), Player.everyone.values()))
+        while len(players) >= 2:
+            p1: Player = players.pop()
+            p2: Player = players.pop()
+            game = Game(p1, p2)
+
+            await self.send_to_spectators(
+                {"action": "game_created", "id": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
+            await self.send_to_spectators(
+                {"action": "game_state", "id": game.id, "state": ...})  # TODO: add game state
+
+            await self.send_to_one(
+                {"action": "turn_request", "gameid": game.id},  # TODO: add game state (p1 perspective)
+                p1.id)
 
     async def delete_game(self, game: Game):
+        """Called after a player disconnects or a game ends"""
+
         print("Closing game", game.id)
 
-        # TODO
+        if game.p1.id in Player.everyone:
+            game.p1.gameid = None
+        if game.p2.id in Player.everyone:
+            game.p2.gameid = None
 
-        if game.p1id in Player.everyone:
-            Player.everyone[game.p1id].gameid = None
-        if game.p2id in Player.everyone:
-            Player.everyone[game.p2id].gameid = None
-
-        await self.send_to_ids({"action": "game_deleted", "id": game.id}, self.spectator_ids + [game.p1id, game.p2id])
+        await self.send_to_spectators(
+            {"action": "game_deleted", "id": game.id})
 
     # Websocket actions
 
@@ -68,8 +84,9 @@ class GameServer(BasicServer):
             del Player.everyone[wsid]
             await self.send_to_joined({'action': 'player_left', 'id': wsid})
             return await ws.send_json({'action': 'room_left'})
-
-        # TODO: Add game move actions
+        elif action == 'turn':
+            ...
+            # TODO: implement
 
         return False
 
@@ -116,7 +133,6 @@ class GameServer(BasicServer):
                 log.info('[WS] #%s started spectating!', wsid)
                 if self.master_id is None:
                     self.master_id = wsid
-                    mode = 'master'
                     log.info('[WS] #%s is now the game master!', wsid)
 
             return True
