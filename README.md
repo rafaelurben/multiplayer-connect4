@@ -11,7 +11,9 @@ python client.py
 
 ## Server
 
-Install [C++ build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+> [!NOTE]
+> aiohttp 3.9.0 funktioniert noch nicht mit Python 3.12
+> Lösung: `pip install aiohttp==3.9.0b0`
 
 ```shell
 python -m pip install aiohttp
