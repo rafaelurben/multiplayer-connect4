@@ -1,9 +1,9 @@
 import logging
-import re
 import asyncio
 from aiohttp import web
 
 from .server_base import BasicServer
+from .player import Player
 from .game import Game
 
 log = logging.getLogger()
@@ -12,29 +12,31 @@ log = logging.getLogger()
 class GameServer(BasicServer):
     "Game server"
 
-    def __init__(self, clientdir, public_url = None) -> None:
+    def __init__(self, clientdir, public_url=None) -> None:
         self.clientdir = clientdir
         self.public_url = public_url
 
-        self.players = {}
         self.spectator_ids = []
         self.master_id = None
 
         super().__init__()
 
-    def name_check(self, name: str) -> bool:
-        "Check if a name is valid"
+    async def create_games(self):
+        print("Creating games if there are enough players...")
 
-        # Check for duplicate names
-        for player in self.players.values():
-            if player['name'] == name:
-                return False
+        # TODO
 
-        # Validate name
-        if not re.match(r'^[a-zA-Z0-9_\- ]{3,20}$', name):
-            return False
+    async def delete_game(self, game: Game):
+        print("Closing game", game.id)
 
-        return True
+        # TODO
+
+        if game.p1id in Player.everyone:
+            Player.everyone[game.p1id].gameid = None
+        if game.p2id in Player.everyone:
+            Player.everyone[game.p2id].gameid = None
+
+        await self.send_to_ids({"action": "game_deleted", "id": game.id}, self.spectator_ids + [game.p1id, game.p2id])
 
     # Websocket actions
 
@@ -46,14 +48,14 @@ class GameServer(BasicServer):
     async def send_to_joined(self, data):
         """Send data to all clients who joined the game as player or spectator"""
 
-        joined_ids = set(self.players) | set(self.spectator_ids)
+        joined_ids = set(Player.everyone) | set(self.spectator_ids)
         await self.send_to_ids(data, ids=joined_ids)
 
     async def send_to_unjoined(self, data):
         """Send data to all clients who are neither player nor spectator"""
 
-        unjoined_ids = set(self.websockets.keys()) - \
-            set(self.players.keys()) - set(self.spectator_ids)
+        unjoined_ids = set(self.websockets) - \
+            set(Player.everyone) - set(self.spectator_ids)
         await self.send_to_ids(data, ids=unjoined_ids)
 
     # Websocket handlers
@@ -63,8 +65,8 @@ class GameServer(BasicServer):
 
         if action == 'leave_room':
             log.info('[WS] #%s left the room! ("%s")',
-                     wsid, self.players[wsid]['name'])
-            del self.players[wsid]
+                     wsid, Player.everyone[wsid].name)
+            del Player.everyone[wsid]
             await self.send_to_joined({'action': 'player_left', 'id': wsid})
             return await ws.send_json({'action': 'room_left'})
 
@@ -98,18 +100,17 @@ class GameServer(BasicServer):
     async def handle_action_from_unjoined(self, action, data, ws, wsid):
         """Handle action sent from a player that hasn't joined yet"""
 
-        if action == 'join_room':
+        if action == 'join_room':  # join the lobby as player or spectator
             mode = data['mode']
 
-            # TODO: Update logic for multiple games
             if mode == 'player':
-                if not self.name_check(data['name']):
-                    return await ws.send_json({'action': 'alert', 'message': 'Invalid name! Only alphanumeric characters, spaces, underscores and dashes are allowed. (min 3, max 20 characters)'})
-                
                 name = data['name']
-                self.players[wsid] = {'name': name, 'team': None, 'id': wsid}
+                if not Player.name_check(name):
+                    return await ws.send_json({'action': 'alert', 'message': 'Invalid name! Only alphanumeric characters, spaces, underscores and dashes are allowed. (min 3, max 20 characters)'})
+
+                player = Player(name, wsid)
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
-                await self.send_to_joined({'action': 'player_joined', 'id': wsid, 'player': self.players[wsid]})
+                await self.send_to_joined({'action': 'player_joined', 'id': wsid, 'player': player.as_dict()})
             else:
                 self.spectator_ids.append(wsid)
                 log.info('[WS] #%s started spectating!', wsid)
@@ -129,9 +130,9 @@ class GameServer(BasicServer):
         action = data.pop('action', None)
 
         if action == 'message':
-            return await self.send_to_all({'action': 'message', 'id': wsid, 'message': data['message']})
+            return await self.send_to_all({'action': 'message', 'from_id': wsid, 'message': data['message']})
 
-        if wsid in self.players:
+        if wsid in Player.everyone:
             if await self.handle_action_from_player(action, data, ws, wsid) is not False:
                 return
         elif wsid == self.master_id:
@@ -160,11 +161,16 @@ class GameServer(BasicServer):
     async def handle_disconnect(self, ws, wsid):
         """Handle client disconnection."""
 
-        if wsid in self.players:
-            log.info('[WS] #%s ("%s") disconnected!',
-                     wsid, self.players[wsid]['name'])
-            del self.players[wsid]
-            await self.send_to_all({'action': 'player_left', 'id': wsid})
+        if wsid in Player.everyone:
+            player = Player.everyone[wsid]
+            log.info('[WS] #%s ("%s") disconnected!', wsid, player.name)
+
+            # If the player was in a game, safely delete that game
+            if player.gameid:
+                await self.delete_game(Game.games[player.gameid])
+
+            player.delete()
+            await self.send_to_joined({'action': 'player_left', 'id': wsid})
         elif wsid in self.spectator_ids:
             log.info('[WS] #%s (spectator) disconnected!', wsid)
             self.spectator_ids.remove(wsid)
@@ -192,6 +198,9 @@ class GameServer(BasicServer):
     # Gameloop
 
     async def tick(self, ticknum):
+        """This loop could be used to ping players or check if there are games with too long inactive times"""
+
+        # TODO
         ...
 
     async def gameloop(self):
