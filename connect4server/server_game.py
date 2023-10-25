@@ -24,33 +24,38 @@ class GameServer(BasicServer):
     async def create_games(self):
         """Called after a player joins or a game ends."""
 
-        print("Creating games if there are enough players...")
-
         players = list(filter(lambda p: not p.is_in_game(), Player.everyone.values()))
         while len(players) >= 2:
             p1: Player = players.pop()
             p2: Player = players.pop()
             game = Game(p1, p2)
 
+            log.debug(f"[Game] Created game {game.id}")
+
             await self.send_to_spectators(
                 {"action": "game_created", "id": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
             await self.send_to_spectators(
-                {"action": "game_state", "id": game.id, "state": ...})  # TODO: add game state
+                {"action": "game_state", "id": game.id, "board": game.p1board(), "next": game.next_player})
 
             await self.send_to_one(
-                {"action": "turn_request", "gameid": game.id},  # TODO: add game state (p1 perspective)
+                {"action": "game_joined", "gameid": game.id, "opponent": p2.as_dict()}, p1.id)
+            await self.send_to_one(
+                {"action": "game_joined", "gameid": game.id, "opponent": p1.as_dict()}, p2.id)
+
+            await self.send_to_one(
+                {"action": "turn_request", "gameid": game.id, "board": game.p1board()},
                 p1.id)
 
     async def delete_game(self, game: Game):
         """Called after a player disconnects or a game ends"""
 
-        print("Closing game", game.id)
+        log.debug(f"[Game] Deleting game {game.id}")
 
-        if game.p1.id in Player.everyone:
-            game.p1.gameid = None
-        if game.p2.id in Player.everyone:
-            game.p2.gameid = None
+        game.p1.gameid = None
+        game.p2.gameid = None
 
+        await self.send_to_ids(
+            {"action": "game_left", "gameid": game.id}, [game.p1.id, game.p2.id])
         await self.send_to_spectators(
             {"action": "game_deleted", "id": game.id})
 
@@ -97,7 +102,8 @@ class GameServer(BasicServer):
             self.spectator_ids.remove(wsid)
             self.master_id = None
             log.info(
-                '[WS] #%s: The game master left the room! The next spectator will become the new game master!', wsid)
+                '[WS] #%s: The game master left the room! The next spectator '
+                'will become the new game master!', wsid)
             return await ws.send_json({'action': 'room_left'})
 
         # TODO: Add actions like kick player etc.
@@ -123,7 +129,9 @@ class GameServer(BasicServer):
                 name = data['name']
                 if not Player.name_check(name):
                     return await ws.send_json({'action': 'alert',
-                                               'message': 'Invalid name! Only alphanumeric characters, spaces, underscores and dashes are allowed. (min 3, max 20 characters)'})
+                                               'message': 'Invalid name! Only alphanumeric characters, spaces, '
+                                                          'underscores and dashes are allowed. (min 3, '
+                                                          'max 20 characters)'})
 
                 player = Player(name, wsid)
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
@@ -181,7 +189,7 @@ class GameServer(BasicServer):
             player = Player.everyone[wsid]
             log.info('[WS] #%s ("%s") disconnected!', wsid, player.name)
 
-            # If the player was in a game, safely delete that game
+            # If the player was in a game, delete that game
             if player.gameid:
                 await self.delete_game(Game.games[player.gameid])
 

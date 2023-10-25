@@ -2,13 +2,15 @@
 
 Format: `{"action": "<ACTION>", "name": "value"}`
 
-## Server =>
+## From Server to Client
 
-- connect
+- connected
 - room_left
 
 ### Server => Player
 
+- game_joined
+- game_left
 - turn_request
 
 ### Server => Spectator
@@ -17,7 +19,7 @@ Format: `{"action": "<ACTION>", "name": "value"}`
 - game_state
 - game_deleted
 
-## => Server
+## From Client to Server
 
 - join_room
 - leave_room

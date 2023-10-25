@@ -44,6 +44,10 @@ class WSClient:
             case 'connected':  # server has confirmed websocket connection
                 self.playerid = data["id"]
                 await self.send_json({"action": "join_room", "mode": "player", "name": self.name})
+            case 'game_joined':
+                ...
+            case 'game_left':
+                ...
             case 'turn_request':  # a turn is requested
                 ...
                 # TODO: implement state parsing & function call
