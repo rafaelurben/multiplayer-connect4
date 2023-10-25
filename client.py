@@ -2,27 +2,32 @@ import websockets
 import asyncio
 import json
 
+class Client:
+    def __init__(self, url):
+        self.url = url
+        self.ws : websockets.WebSocketClientProtocol = None
 
-async def send_json(data):
-    "Send json message to server"
+    async def main(self):
+        async with websockets.connect(self.url) as ws:
+            self.ws = ws
+            async for message in ws:
+                try:
+                    message_json = json.loads(message)
+                    print("Incoming message:")
+                    await self.recv_json(message_json)
+                except json.JSONDecodeError:
+                    print("Message couldn't be read as json:", message)
 
-    await ws.send(json.dumps(data))
+    async def send_json(self, data):
+        "Send json message to server"
 
-async def recv_json(data):
-    "Process incoming message from the server"
+        await self.ws.send(json.dumps(data))
 
-    ...
+    async def recv_json(self, data):
+        "Process incoming message from the server"
 
-async def main(ws):
-    async with ws:
-        async for message in ws:
-            try:
-                message_json = json.loads(message)
-                print("Incoming message:")
-                recv_json(message_json)
-            except json.JSONDecodeError:
-                print("Message couldn't be read as json:", message)
+        ...
 
 if __name__ == "__main__":
-    ws = websockets.connect("ws://localhost")
-    asyncio.run(main(ws))
+    client = Client("wss://socketsbay.com/wss/v2/1/demo/")
+    asyncio.run(client.main())
