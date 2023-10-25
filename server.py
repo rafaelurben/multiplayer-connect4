@@ -15,8 +15,9 @@ stream = logging.StreamHandler(sys.stdout)
 stream.setLevel(logging.DEBUG)
 log.addHandler(stream)
 
+
 def main(*args, **kwargs):
-    "Run the server"
+    """Run the server"""
 
     server = GameServer(*args, **kwargs)
 
@@ -26,6 +27,7 @@ def main(*args, **kwargs):
     except KeyboardInterrupt:
         loop.run_until_complete(server.stop())
         loop.close()
+
 
 # Main part - only called if file is run directly (not via import)
 if __name__ == '__main__':
@@ -42,6 +44,7 @@ if __name__ == '__main__':
             log.info("[Server] Tunnel URL: %s", ngrok_url)
             main(clientdir, public_url=ngrok_url)
     else:
-        log.warning("[Server] ngrok is not in PATH! Please install it from https://ngrok.com/download or add it to PATH.")
+        log.warning(
+            "[Server] ngrok is not in PATH! Please install it from https://ngrok.com/download or add it to PATH.")
         log.warning("[Server] Starting server without ngrok tunnel.")
         main(clientdir)

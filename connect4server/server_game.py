@@ -2,15 +2,15 @@ import logging
 import asyncio
 from aiohttp import web
 
-from .server_base import BasicServer
-from .player import Player
-from .game import Game
+from server_base import BasicServer
+from player import Player
+from game import Game
 
 log = logging.getLogger()
 
 
 class GameServer(BasicServer):
-    "Game server"
+    """Game server"""
 
     def __init__(self, clientdir, public_url=None) -> None:
         self.clientdir = clientdir
@@ -54,8 +54,7 @@ class GameServer(BasicServer):
     async def send_to_unjoined(self, data):
         """Send data to all clients who are neither player nor spectator"""
 
-        unjoined_ids = set(self.websockets) - \
-            set(Player.everyone) - set(self.spectator_ids)
+        unjoined_ids = set(self.websockets) - set(Player.everyone) - set(self.spectator_ids)
         await self.send_to_ids(data, ids=unjoined_ids)
 
     # Websocket handlers
@@ -106,7 +105,8 @@ class GameServer(BasicServer):
             if mode == 'player':
                 name = data['name']
                 if not Player.name_check(name):
-                    return await ws.send_json({'action': 'alert', 'message': 'Invalid name! Only alphanumeric characters, spaces, underscores and dashes are allowed. (min 3, max 20 characters)'})
+                    return await ws.send_json({'action': 'alert',
+                                               'message': 'Invalid name! Only alphanumeric characters, spaces, underscores and dashes are allowed. (min 3, max 20 characters)'})
 
                 player = Player(name, wsid)
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
@@ -210,7 +210,7 @@ class GameServer(BasicServer):
 
         while True:
             await asyncio.gather(
-                asyncio.sleep(1/10),
+                asyncio.sleep(1 / 10),
                 self.tick(ticknum=ticknum),
             )
             ticknum += 1

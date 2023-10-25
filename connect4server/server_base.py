@@ -5,8 +5,9 @@ from aiohttp import web
 
 log = logging.getLogger()
 
+
 class BasicServer:
-    "Basic websocket and http server"
+    """Basic websocket and http server"""
 
     def __init__(self) -> None:
         self.app = self.create_app()
@@ -87,7 +88,7 @@ class BasicServer:
     async def websocket_handler(self, request):
         """Handle incoming websocket connections."""
 
-        # Setup the websocket connection
+        # Set up the websocket connection
 
         ws_current = web.WebSocketResponse()
         wsid = self.get_next_id()
@@ -147,8 +148,8 @@ class BasicServer:
 
         app = web.Application()
         app.add_routes([
-            web.get('/ws', self.websocket_handler),
-        ] + self.get_routes())
+                           web.get('/ws', self.websocket_handler),
+                       ] + self.get_routes())
         app.on_cleanup.append(self.handle_cleanup)
         app.on_shutdown.append(self.handle_shutdown)
         app.on_startup.append(self.handle_startup)

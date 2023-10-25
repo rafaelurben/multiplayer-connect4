@@ -6,6 +6,7 @@ import logging
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
+
 def is_ngrok_available() -> bool:
     "Check if ngrok is available"
 
@@ -14,6 +15,7 @@ def is_ngrok_available() -> bool:
         return result.returncode == 0
     except FileNotFoundError:
         return False
+
 
 class NgrokTunnel():
     def __init__(self, port: int = 80, web_addr: str = "localhost:4040"):

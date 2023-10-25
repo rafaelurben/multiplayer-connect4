@@ -1,15 +1,16 @@
-"Player model"
+"""Player model"""
 
 import typing
 import re
 
-class Player:
-    everyone : typing.Dict[int, "Player"] = {}
 
-    def __init__(self, name : str, plid : int) -> None:
-        self.name : str = name
-        self.playerid : int = plid
-        self.gameid : int = None
+class Player:
+    everyone: typing.Dict[int, "Player"] = {}
+
+    def __init__(self, name: str, plid: int) -> None:
+        self.name: str = name
+        self.playerid: int = plid
+        self.gameid: int | None = None
 
         Player.everyone[self.playerid] = self
 
@@ -31,8 +32,8 @@ class Player:
         del Player.everyone[self.playerid]
 
     @classmethod
-    def name_check(self, name: str) -> bool:
-        "Check if a name is valid"
+    def name_check(cls, name: str) -> bool:
+        """Check if a name is valid"""
 
         # Check for duplicate names
         for player in Player.everyone.values():

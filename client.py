@@ -2,10 +2,11 @@ import websockets
 import asyncio
 import json
 
+
 class Client:
     def __init__(self, url):
         self.url = url
-        self.ws : websockets.WebSocketClientProtocol = None
+        self.ws: websockets.WebSocketClientProtocol = None
 
     async def main(self):
         async with websockets.connect(self.url) as ws:
@@ -27,6 +28,7 @@ class Client:
         "Process incoming message from the server"
 
         ...
+
 
 if __name__ == "__main__":
     client = Client("wss://socketsbay.com/wss/v2/1/demo/")
