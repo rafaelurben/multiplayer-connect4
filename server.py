@@ -47,4 +47,5 @@ if __name__ == '__main__':
         log.warning(
             "[Server] ngrok is not in PATH! Please install it from https://ngrok.com/download or add it to PATH.")
         log.warning("[Server] Starting server without ngrok tunnel.")
+        log.info("[Server] Using default values http://localhost:80")
         main(clientdir)
