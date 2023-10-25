@@ -1,30 +1,29 @@
 # Connection flow
 
-At first, there is only one mode.
+Currently, there is only one mode.
 
 ## Default mode
 
-As soon as two clients are "waiting", a new game is created and assigned.
-
-- Client 1 (c1) connects to server via socket
-- Server accepts connection and sends c1 "waiting"
-- Client 2 (c2) connects to server via socket
-- Server accepts connection and sends c2 "waiting"
-- Server creates game
+- Client 1 (c1) connects to server via websocket
+- Server confirms with `{'action': 'connected', 'id': '<ID>'}`
+- Client 1 (c1) sends `{'action': 'join_room', 'mode': 'player', 'name': '<NAME>'}` to tell the server they want to play
+- Server confirms with `{'action': 'player_joined', 'id': '<ID>'}`
+- Same for Client 2 (c2)
+- Server sees that enough (2) players are waiting => [Game creation]([#game-creation)
 
 ### Game creation
 
 - Server creates a new game instance
-- Server broadcasts new game instance to all spectators
+- Server broadcasts new game instance to every joined player
 - Server tells c1 and c2 their new game id
 - Server tells c1 to begin
 
 ### In game
 
 - Server sends game ID, [current board](#data-board) and client's color to client
-- Client answers with its turn (number between 0 and 6)
+- Client answers with their column (number between 0 and 6)
 - Server validates turn
-- Server broadcasts new board and newest turn to all spectators viewing
+- Server broadcasts new board and newest turn to every joined player
 - (repeat for next player)
 
 ## Data Transmission
