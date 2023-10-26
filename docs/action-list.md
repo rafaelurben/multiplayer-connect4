@@ -11,7 +11,9 @@ Format: `{"action": "<ACTION>", "name": "value"}`
 
 - game_joined
 - game_left
+- invalid_turn
 - turn_request
+- turn_accepted
 
 ### Server => Spectator
 

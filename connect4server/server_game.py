@@ -90,8 +90,39 @@ class GameServer(BasicServer):
             await self.send_to_joined({'action': 'player_left', 'id': wsid})
             return await ws.send_json({'action': 'room_left'})
         elif action == 'turn':
-            ...
-            # TODO: implement
+            try:
+                gameid = int(getattr(data, "gameid"))
+                col = int(getattr(data, "column"))
+            except ValueError:
+                return await ws.send_json({'action': 'invalid_turn', 'reason': 'not an integer'})
+
+            if not gameid in Game.games:
+                return await ws.send_json({'action': 'invalid_turn', 'reason': 'game not found'})
+            game = Game.games[gameid]
+
+            if wsid == game.p1.id:
+                pnum = 1
+            elif wsid == game.p2.id:
+                pnum = 2
+            else:
+                return await ws.send_json({'action': 'invalid_turn', 'reason': 'player not found'})
+
+            if not game.validate_turn(pnum, col):
+                return await ws.send_json({'action': 'invalid_turn', 'reason': 'turn not valid'})
+
+            game.make_turn(pnum, col)
+            await self.send_to_one(
+                {"action": "turn_accepted"},
+                wsid)
+
+            # TODO: check for game end
+
+            await self.send_to_spectators(
+                {"action": "game_state", "id": game.id, "board": game.p1board(), "next": game.next_player})
+
+            await self.send_to_one(
+                {"action": "turn_request", "gameid": game.id, "board": game.p2board() if pnum == 1 else game.p1board()},
+                game.p2.id if pnum == 1 else game.p1.id)
 
         return False
 
