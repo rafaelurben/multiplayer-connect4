@@ -166,7 +166,7 @@ class GameServer(BasicServer):
 
                 player = Player(name, wsid)
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
-                await self.send_to_joined({'action': 'player_joined', 'id': wsid, 'player': player.as_dict()})
+                await self.send_to_spectators({'action': 'player_joined', 'id': wsid, 'player': player.as_dict()})
             else:
                 self.spectator_ids.append(wsid)
                 log.info('[WS] #%s started spectating!', wsid)
@@ -225,7 +225,7 @@ class GameServer(BasicServer):
                 await self.delete_game(Game.games[player.gameid])
 
             player.delete()
-            await self.send_to_joined({'action': 'player_left', 'id': wsid})
+            await self.send_to_spectators({'action': 'player_left', 'id': wsid})
         elif wsid in self.spectator_ids:
             log.info('[WS] #%s (spectator) disconnected!', wsid)
             self.spectator_ids.remove(wsid)

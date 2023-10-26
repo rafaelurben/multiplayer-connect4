@@ -20,6 +20,8 @@ Format: `{"action": "<ACTION>", "name": "value"}`
 - game_created
 - game_state
 - game_deleted
+- player_joined
+- player_left
 
 ## From Client to Server
 
