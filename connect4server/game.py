@@ -16,6 +16,8 @@ class Game:
 
         self.p1: Player = p1
         self.p2: Player = p2
+        self.p1.gameid = self.gameid
+        self.p2.gameid = self.gameid
 
         self.winning_nr: int | None = None
 
@@ -35,6 +37,10 @@ class Game:
 
     def delete(self):
         del Game.games[self.gameid]
+        if self.p1.gameid == self.gameid:
+            self.p1.gameid = None
+        if self.p2.gameid == self.gameid:
+            self.p2.gameid = None
 
     # Getters
 

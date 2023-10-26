@@ -22,7 +22,12 @@ class GameServer(BasicServer):
         super().__init__()
 
     async def create_games(self):
-        """Called after a player joins or a game ends."""
+        """
+        Called after a player joins or a game ends.
+        Creates new games if there are 2 or more players waiting.
+        """
+
+        print("[Game] Trying to create games!")
 
         players = list(filter(lambda p: not p.is_in_game(), Player.everyone.values()))
         while len(players) >= 2:
@@ -50,9 +55,7 @@ class GameServer(BasicServer):
         """Called after a player disconnects or a game ends"""
 
         log.debug(f"[Game] Deleting game {game.id}")
-
-        game.p1.gameid = None
-        game.p2.gameid = None
+        game.delete()
 
         await self.send_to_ids(
             {"action": "game_left", "gameid": game.id}, [game.p1.id, game.p2.id])
@@ -90,14 +93,15 @@ class GameServer(BasicServer):
             await self.send_to_joined({'action': 'player_left', 'id': wsid})
             return await ws.send_json({'action': 'room_left'})
         elif action == 'turn':
+            player = Player.everyone[wsid]
             try:
-                gameid = int(getattr(data, "gameid"))
-                col = int(getattr(data, "column"))
+                gameid = int(data.get("gameid"))
+                col = int(data.get("column"))
             except ValueError:
                 return await ws.send_json({'action': 'invalid_turn', 'reason': 'not an integer'})
 
-            if not gameid in Game.games:
-                return await ws.send_json({'action': 'invalid_turn', 'reason': 'game not found'})
+            if player.gameid != gameid:
+                return await ws.send_json({'action': 'invalid_turn', 'reason': 'not your game'})
             game = Game.games[gameid]
 
             if wsid == game.p1.id:
@@ -123,6 +127,7 @@ class GameServer(BasicServer):
             await self.send_to_one(
                 {"action": "turn_request", "gameid": game.id, "board": game.p2board() if pnum == 1 else game.p1board()},
                 game.p2.id if pnum == 1 else game.p1.id)
+            return True
 
         return False
 
@@ -167,6 +172,7 @@ class GameServer(BasicServer):
                 player = Player(name, wsid)
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
                 await self.send_to_spectators({'action': 'player_joined', 'id': wsid, 'player': player.as_dict()})
+                await self.create_games()
             else:
                 self.spectator_ids.append(wsid)
                 log.info('[WS] #%s started spectating!', wsid)
