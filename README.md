@@ -18,6 +18,6 @@ python server.py
 ## Client
 
 ```shell
-python -m pip install -U websocket-client
+python -m pip install -U pip websockets
 python client.py
 ```

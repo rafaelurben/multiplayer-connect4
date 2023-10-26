@@ -1,6 +1,9 @@
 """Client preset for BA py4connect competition
 
 `python -m pip install -U pip websockets`
+
+Preset by: Rafael Urben - 2023
+Implementation: YOUR NAME - YEAR
 """
 
 import websockets
