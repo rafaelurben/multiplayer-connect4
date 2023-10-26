@@ -12,6 +12,32 @@ import json
 import random
 import string
 
+NAME = None  # TODO: Enter your name
+
+
+async def process_turn(board) -> int:
+    """
+    Function that processes the current game board and calculates the
+    best possible column (number from 0 to 6) for player 1.
+    """
+
+    # TODO: Replace this function body with your custom implementation!
+
+    print("*" * 6)
+    print(board)
+    print("*" * 6)
+
+    col = None
+    while True:
+        try:
+            col = int(input("Deine Spalte [0-6]: "))
+            if not 0 <= col <= 6:
+                continue
+            break
+        except ValueError:
+            continue
+    return col
+
 
 class WSClient:
     def __init__(self, url, name=None):
@@ -43,19 +69,32 @@ class WSClient:
     async def recv_json(self, data: dict):
         """Process incoming message from the server"""
 
-        match data["action"]:
+        action = data.pop("action")
+        match action:
             case 'connected':  # server has confirmed websocket connection
                 self.playerid = data["id"]
-                await self.send_json({"action": "join_room", "mode": "player", "name": self.name})
+                await self.send_json({
+                    "action": "join_room", "mode": "player", "name": self.name
+                })
             case 'game_joined':
-                ...
+                print("Game joined!", data)
             case 'game_left':
-                ...
+                print("Game left!", data)
             case 'turn_request':  # a turn is requested
-                ...
-                # TODO: implement state parsing & function call
+                print("Turn requested: ", data)
+
+                col = await process_turn(data["board"])
+                await self.send_json({
+                    'action': 'turn', 'gameid': data['gameid'], 'column': col
+                })
+            case 'turn_accepted':
+                print("The turn has been accepted! Yay!")
+            case 'invalid_turn':
+                print("Invalid turn! Reason:", data["reason"])
+            case _:  # default case
+                print(f"Action not implemented!")
 
 
 if __name__ == "__main__":
-    client = WSClient("ws://localhost:80/ws", name=None)  # TODO: Enter your name
+    client = WSClient("ws://localhost:80/ws", name=NAME)
     asyncio.run(client.main())
