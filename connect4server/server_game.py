@@ -269,3 +269,7 @@ class GameServer(BasicServer):
                 self.tick(ticknum=ticknum),
             )
             ticknum += 1
+
+
+if __name__ == "__main__":
+    print("You need to run the server.py file in the root folder of this repo!")
