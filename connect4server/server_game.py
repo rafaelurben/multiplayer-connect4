@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import random
 from aiohttp import web
 
 from connect4server.server_base import BasicServer
@@ -31,11 +32,9 @@ class GameServer(BasicServer):
 
         players = list(filter(lambda p: not p.is_in_game(), Player.everyone.values()))
         while len(players) >= 2:
-            p1: Player = players.pop()
-            p2: Player = players.pop()
+            p1: Player = players.pop(random.randint(0, len(players) - 1))
+            p2: Player = players.pop(random.randint(0, len(players) - 1))
             game = Game(p1, p2)
-
-            log.debug(f"[Game] Created game {game.id}")
 
             await self.send_to_spectators(
                 {"action": "game_created", "gameid": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
@@ -48,13 +47,11 @@ class GameServer(BasicServer):
                 {"action": "game_joined", "gameid": game.id, "opponent": p1.as_dict()}, p2.id)
 
             await self.send_to_one(
-                {"action": "turn_request", "gameid": game.id, "board": game.p1board()},
-                p1.id)
+                {"action": "turn_request", "gameid": game.id, "board": game.p1board()}, p1.id)
 
     async def delete_game(self, game: Game):
         """Called after a player disconnects or a game ends"""
 
-        log.debug(f"[Game] Deleting game {game.id}")
         game.delete()
 
         await self.send_to_ids(
@@ -106,11 +103,8 @@ class GameServer(BasicServer):
                 return await ws.send_json({'action': 'invalid_turn', 'reason': 'not your game'})
             game = Game.games[gameid]
 
-            if wsid == game.p1.id:
-                pnum = 1
-            elif wsid == game.p2.id:
-                pnum = 2
-            else:
+            pnum = game.get_pnum(player)
+            if pnum is None:
                 return await ws.send_json({'action': 'invalid_turn', 'reason': 'player not found'})
 
             if not game.validate_turn(pnum, col):
@@ -122,17 +116,16 @@ class GameServer(BasicServer):
             otherboard = game.p2board() if pnum == 1 else game.p1board()
 
             await self.send_to_one(
-                {"action": "turn_accepted", "board": thisboard},
-                wsid)
+                {"action": "turn_accepted", "board": thisboard}, wsid)
             await self.send_to_spectators(
                 {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
 
-            # TODO: notify client if won, lost or tie
+            if game.is_finished:  # if game ended
+                # TODO: notify client if won, lost or tie
 
-            if game.check_for_end():  # if game ended
                 await self.send_to_spectators(
-                    {"action": "game_ended", "gameid": game.id, "winning_nr": game.winning_nr,
-                     "winning_name": game.winning_name}
+                    {"action": "game_ended", "gameid": game.id,
+                     "winning_nr": game.winning_nr, "winner": game.winner}
                 )
                 await self.delete_game(game)
             else:

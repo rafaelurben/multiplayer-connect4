@@ -44,3 +44,8 @@ class Player:
             return False
 
         return True
+
+
+# Special player used when there's a tie
+tie = Player("Unentschieden", 0)
+Player.everyone.pop(0)
