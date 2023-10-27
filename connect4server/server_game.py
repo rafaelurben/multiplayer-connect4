@@ -127,16 +127,18 @@ class GameServer(BasicServer):
             await self.send_to_spectators(
                 {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
 
-            if game.check_for_end():
+            # TODO: notify client if won, lost or tie
+
+            if game.check_for_end():  # if game ended
                 await self.send_to_spectators(
                     {"action": "game_ended", "gameid": game.id, "winning_nr": game.winning_nr,
                      "winning_name": game.winning_name}
                 )
                 await self.delete_game(game)
-
-            await self.send_to_one(
-                {"action": "turn_request", "gameid": game.id, "board": otherboard},
-                game.p2.id if pnum == 1 else game.p1.id)
+            else:
+                await self.send_to_one(
+                    {"action": "turn_request", "gameid": game.id, "board": otherboard},
+                    game.p2.id if pnum == 1 else game.p1.id)
             return True
 
         return False

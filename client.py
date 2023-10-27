@@ -1,4 +1,5 @@
-"""Client preset for BA py4connect competition
+"""
+Client preset for ICT Campus connect4 Python competition
 
 `python -m pip install -U pip websockets`
 

@@ -5,6 +5,8 @@ import typing
 from connect4server.player import Player
 
 
+# TODO: replace win check implementation to only check where a new piece has been inserted!
+
 class Game:
     games: typing.Dict[int, "Game"] = {}
     _last_gameid: int = 0
@@ -70,7 +72,7 @@ class Game:
 
     @property
     def diagonals(self):
-        return ... # TODO: add diagonals
+        return []
 
     # State
 
@@ -95,11 +97,11 @@ class Game:
         return False
 
     def _check_row_for_winner(self, row) -> int:
-        for i_start in range(0, len(range)-3):
+        for i_start in range(0, len(row)-3):
             if row[i_start] != 0 and row[i_start] == row[i_start+1] == row[i_start+2] == row[i_start+3]:
-                winner = row[i_start]
-                print("Winner:", winner)
-                return winner
+                winning_nr = row[i_start]
+                print(f"[Game #{self.gameid}] Winning nr:", winning_nr)
+                return winning_nr
         return 0
 
     def check_for_end(self) -> bool:
