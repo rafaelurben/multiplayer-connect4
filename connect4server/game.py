@@ -7,11 +7,11 @@ from connect4server.player import Player
 
 class Game:
     games: typing.Dict[int, "Game"] = {}
-    lastgameid: int = 0
+    _last_gameid: int = 0
 
     def __init__(self, p1: Player, p2: Player):
-        Game.lastgameid += 1
-        self.gameid: int = Game.lastgameid
+        Game._last_gameid += 1
+        self.gameid: int = Game._last_gameid
         Game.games[self.gameid] = self
 
         self.p1: Player = p1

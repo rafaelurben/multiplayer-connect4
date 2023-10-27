@@ -38,9 +38,9 @@ class GameServer(BasicServer):
             log.debug(f"[Game] Created game {game.id}")
 
             await self.send_to_spectators(
-                {"action": "game_created", "id": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
+                {"action": "game_created", "gameid": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
             await self.send_to_spectators(
-                {"action": "game_state", "id": game.id, "board": game.p1board(), "next": game.next_player})
+                {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
 
             await self.send_to_one(
                 {"action": "game_joined", "gameid": game.id, "opponent": p2.as_dict()}, p1.id)
@@ -60,7 +60,9 @@ class GameServer(BasicServer):
         await self.send_to_ids(
             {"action": "game_left", "gameid": game.id}, [game.p1.id, game.p2.id])
         await self.send_to_spectators(
-            {"action": "game_deleted", "id": game.id})
+            {"action": "game_deleted", "gameid": game.id})
+
+        await self.create_games()
 
     # Websocket actions
 
@@ -116,7 +118,7 @@ class GameServer(BasicServer):
 
             game.make_turn(pnum, col)
             await self.send_to_one(
-                {"action": "turn_accepted"},
+                {"action": "turn_accepted", "board": thisboard},
                 wsid)
 
             # TODO: check for game end
