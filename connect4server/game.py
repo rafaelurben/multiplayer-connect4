@@ -45,6 +45,16 @@ class Game:
     # Getters
 
     @property
+    def winning_name(self) -> str | None:
+        if self.winning_nr == 0:
+            return "Unentschieden"
+        elif self.winning_nr == 1:
+            return self.p1.name
+        elif self.winning_nr == 2:
+            return self.p2.name
+        return None
+
+    @property
     def rows(self):
         return self.board
     

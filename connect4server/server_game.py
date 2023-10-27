@@ -117,17 +117,25 @@ class GameServer(BasicServer):
                 return await ws.send_json({'action': 'invalid_turn', 'reason': 'turn not valid'})
 
             game.make_turn(pnum, col)
+
+            thisboard = game.p1board() if pnum == 1 else game.p2board()
+            otherboard = game.p2board() if pnum == 1 else game.p1board()
+
             await self.send_to_one(
                 {"action": "turn_accepted", "board": thisboard},
                 wsid)
-
-            # TODO: check for game end
-
             await self.send_to_spectators(
-                {"action": "game_state", "id": game.id, "board": game.p1board(), "next": game.next_player})
+                {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
+
+            if game.check_for_end():
+                await self.send_to_spectators(
+                    {"action": "game_ended", "gameid": game.id, "winning_nr": game.winning_nr,
+                     "winning_name": game.winning_name}
+                )
+                await self.delete_game(game)
 
             await self.send_to_one(
-                {"action": "turn_request", "gameid": game.id, "board": game.p2board() if pnum == 1 else game.p1board()},
+                {"action": "turn_request", "gameid": game.id, "board": otherboard},
                 game.p2.id if pnum == 1 else game.p1.id)
             return True
 
