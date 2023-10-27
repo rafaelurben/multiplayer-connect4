@@ -13,19 +13,24 @@ import random
 import string
 
 NAME = None  # TODO: Enter your name
+URL = "ws://localhost:80/ws"  # TODO: Replace with server URL
+
+
+def print_board(board):
+    print("*" * 6)
+    print(board)
+    print("*" * 6)
 
 
 async def process_turn(board) -> int:
     """
     Function that processes the current game board and calculates the
     best possible column (number from 0 to 6) for player 1.
+
+    Board format: "0000000\n0000000\n0000000\n0000000\n0010000\n0120200"
     """
 
     # TODO: Replace this function body with your custom implementation!
-
-    print("*" * 6)
-    print(board)
-    print("*" * 6)
 
     col = None
     while True:
@@ -81,14 +86,17 @@ class WSClient:
             case 'game_left':
                 print("Game left!", data)
             case 'turn_request':  # a turn is requested
-                print("Turn requested: ", data)
+                print("Turn requested!")
 
+                print_board(data["board"])
                 col = await process_turn(data["board"])
                 await self.send_json({
                     'action': 'turn', 'gameid': data['gameid'], 'column': col
                 })
             case 'turn_accepted':
                 print("The turn has been accepted! Yay!")
+
+                print_board(data["board"])
             case 'invalid_turn':
                 print("Invalid turn! Reason:", data["reason"])
             case _:  # default case
@@ -96,5 +104,5 @@ class WSClient:
 
 
 if __name__ == "__main__":
-    client = WSClient("ws://localhost:80/ws", name=NAME)
+    client = WSClient(url=URL, name=NAME)
     asyncio.run(client.main())
