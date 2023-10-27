@@ -18,9 +18,9 @@ URL = "ws://localhost:80/ws"  # TODO: Replace with server URL
 
 
 def print_board(board):
-    print("*" * 6)
-    print(board)
-    print("*" * 6)
+    print("0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣")
+    print(board.replace("0", "⬜").replace("1", "🟦").replace("2", "🟥"))
+    print("-- Du bist 🟦 --")
 
 
 async def process_turn(board) -> int:
@@ -33,15 +33,9 @@ async def process_turn(board) -> int:
 
     # TODO: Replace this function body with your custom implementation!
 
-    col = None
-    while True:
-        try:
-            col = int(input("Deine Spalte [0-6]: "))
-            if not 0 <= col <= 6:
-                continue
-            break
-        except ValueError:
-            continue
+    col = 7
+    while board[col] != '0':
+        col = random.randint(0, 6)
     return col
 
 

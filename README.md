@@ -17,7 +17,9 @@ python server.py
 
 ## Client
 
+Select your clientfile from ./connect4pyclients.
+
 ```shell
 python -m pip install -U pip websockets
-python client.py
+python CLIENTFILE.py
 ```
