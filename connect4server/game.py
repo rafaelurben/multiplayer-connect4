@@ -17,7 +17,9 @@ class Game:
         self.p1: Player = p1
         self.p2: Player = p2
         self.p1.gameid = self.gameid
+        self.p1.is_ready = False
         self.p2.gameid = self.gameid
+        self.p2.is_ready = False
 
         self.is_finished: bool = False
         self.winning_nr: int | None = None

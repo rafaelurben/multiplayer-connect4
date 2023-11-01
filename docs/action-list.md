@@ -1,15 +1,18 @@
 # Action list
 
-Format: `{"action": "<ACTION>", "name": "value"}`
+Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 
 ## From Server to Client
 
 - connected
 - room_left
+- alert
 
 ### Server => Player
 
+- name_rejected
 - game_joined
+- game_result
 - game_left
 - invalid_turn
 - turn_request
@@ -30,4 +33,5 @@ Format: `{"action": "<ACTION>", "name": "value"}`
 
 ### Player => Server
 
+- ready
 - turn

@@ -7,19 +7,18 @@ import re
 class Player:
     everyone: typing.Dict[int, "Player"] = {}
 
-    def __init__(self, name: str, plid: int) -> None:
+    def __init__(self, name: str, plid: int, hidden: bool = False) -> None:
         self.name: str = name
         self.playerid: int = plid
         self.gameid: int | None = None
+        self.is_ready: bool = False
 
-        Player.everyone[self.playerid] = self
+        if not hidden:
+            Player.everyone[self.playerid] = self
 
     @property
     def id(self):
         return self.playerid
-
-    def is_in_game(self) -> bool:
-        return self.gameid is not None
 
     def as_dict(self) -> dict:
         return {
@@ -31,7 +30,11 @@ class Player:
         del Player.everyone[self.playerid]
 
     @classmethod
-    def name_check(cls, name: str) -> bool:
+    def get(cls, pid: int) -> "Player":
+        return cls.everyone.get(pid, invalid)
+
+    @classmethod
+    def is_valid_name(cls, name: str) -> bool:
         """Check if a name is valid"""
 
         # Check for duplicate names
@@ -48,4 +51,5 @@ class Player:
 
 # Special player used when there's a tie
 tie = Player("Unentschieden", 0)
-Player.everyone.pop(0)
+# Special player used when a player was not found
+invalid = Player("Invalid", 0)

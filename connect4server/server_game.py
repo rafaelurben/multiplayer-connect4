@@ -30,7 +30,7 @@ class GameServer(BasicServer):
 
         print("[Game] Trying to create games!")
 
-        players = list(filter(lambda p: not p.is_in_game(), Player.everyone.values()))
+        players = list(filter(lambda p: p.is_ready, Player.everyone.values()))
         while len(players) >= 2:
             p1: Player = players.pop(random.randint(0, len(players) - 1))
             p2: Player = players.pop(random.randint(0, len(players) - 1))
@@ -59,8 +59,6 @@ class GameServer(BasicServer):
         await self.send_to_spectators(
             {"action": "game_deleted", "gameid": game.id})
 
-        await self.create_games()
-
     # Websocket actions
 
     async def send_to_spectators(self, data):
@@ -87,12 +85,17 @@ class GameServer(BasicServer):
 
         if action == 'leave_room':
             log.info('[WS] #%s left the room! ("%s")',
-                     wsid, Player.everyone[wsid].name)
-            del Player.everyone[wsid]
+                     wsid, Player.get(wsid).name)
+            player = Player.get(wsid)
+            player.delete()
             await self.send_to_joined({'action': 'player_left', 'id': wsid})
             return await ws.send_json({'action': 'room_left'})
+        elif action == 'ready':
+            player = Player.get(wsid)
+            player.is_ready = True
+            return await self.create_games()
         elif action == 'turn':
-            player = Player.everyone[wsid]
+            player = Player.get(wsid)
             try:
                 gameid = int(data.get("gameid"))
                 col = int(data.get("column"))
@@ -121,8 +124,17 @@ class GameServer(BasicServer):
                 {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
 
             if game.is_finished:  # if game ended
-                # TODO: notify client if won, lost or tie
+                # Notify client if won, lost or tie
+                await self.send_to_one(
+                    {"action": "game_result", "gameid": game.id,
+                     "state": "won" if game.winning_nr == 1 else "lost" if game.winning_nr == 2 else "tie"},
+                    game.p1.id)
+                await self.send_to_one(
+                    {"action": "game_result", "gameid": game.id,
+                     "state": "won" if game.winning_nr == 2 else "lost" if game.winning_nr == 1 else "tie"},
+                    game.p2.id)
 
+                # Notify spectators and delete game
                 await self.send_to_spectators(
                     {"action": "game_ended", "gameid": game.id,
                      "winning_nr": game.winning_nr, "winner": game.winner}
@@ -168,8 +180,8 @@ class GameServer(BasicServer):
 
             if mode == 'player':
                 name = data['name']
-                if not Player.name_check(name):
-                    return await ws.send_json({'action': 'alert',
+                if not Player.is_valid_name(name):
+                    return await ws.send_json({'action': 'name_rejected',
                                                'message': 'Invalid name! Only alphanumeric characters, spaces, '
                                                           'underscores and dashes are allowed. (min 3, '
                                                           'max 20 characters)'})
@@ -228,7 +240,7 @@ class GameServer(BasicServer):
         """Handle client disconnection."""
 
         if wsid in Player.everyone:
-            player = Player.everyone[wsid]
+            player = Player.get(wsid)
             log.info('[WS] #%s ("%s") disconnected!', wsid, player.name)
 
             # If the player was in a game, delete that game
