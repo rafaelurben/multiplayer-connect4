@@ -48,7 +48,7 @@ class Game:
             self.p2.gameid = None
         print(
             f"[Game #{self.id}] Deleted game with state finished={self.is_finished}, winning_nr={self.winning_nr}, "
-            f"winning_name={self.winner.name}")
+            f"winning_name={self.winner.name if self.winner else None}")
 
     # Getters
 
