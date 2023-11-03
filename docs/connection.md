@@ -8,8 +8,9 @@ Currently, there is only one mode.
 - Server confirms with `{'action': 'connected', 'id': '<ID>'}`
 - Client 1 (c1) sends `{'action': 'join_room', 'mode': 'player', 'name': '<NAME>'}` to tell the server they want to play
 - Server confirms with `{'action': 'player_joined', 'id': '<ID>'}`
+- Client 1 (c1) sends `{'action': 'ready'}`
 - Same for Client 2 (c2)
-- Server sees that enough (2) players are waiting => [Game creation]([#game-creation)
+- Server sees that enough (2) players are ready => [Game creation]([#game-creation)
 
 ### Game creation
 
@@ -36,7 +37,7 @@ Via JSON:
 
 ### Data Board
 
-A string with 6 rows
+A string with 6 rows. For players, 1 is always the player that receives the data.
 
 ```js
 "0000000\n0000000\n0000000\n0000000\n0010000\n0120200"

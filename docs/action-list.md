@@ -5,8 +5,9 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 ## From Server to Client
 
 - connected
+- room_joined (mode: player/spectator/master)
 - room_left
-- alert
+- alert (message)
 
 ### Server => Player
 

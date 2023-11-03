@@ -188,14 +188,20 @@ class GameServer(BasicServer):
 
                 player = Player(name, wsid)
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
+                await ws.send_json({'action': 'room_joined', 'mode': 'player', 'player': player.as_dict()})
                 await self.send_to_spectators({'action': 'player_joined', 'id': wsid, 'player': player.as_dict()})
                 await self.create_games()
             else:
                 self.spectator_ids.append(wsid)
                 log.info('[WS] #%s started spectating!', wsid)
                 if self.master_id is None:
+                    mode = "master"
                     self.master_id = wsid
                     log.info('[WS] #%s is now the game master!', wsid)
+                else:
+                    mode = "spectator"
+
+                await ws.send_json({'action': 'room_joined', 'mode': mode})
 
             return True
         return False
