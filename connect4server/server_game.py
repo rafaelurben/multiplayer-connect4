@@ -96,10 +96,11 @@ class GameServer(BasicServer):
             return await self.create_games()
         elif action == 'turn':
             player = Player.get(wsid)
+            print(data)
             try:
                 gameid = int(data.get("gameid"))
                 col = int(data.get("column"))
-            except ValueError:
+            except TypeError:
                 return await ws.send_json({'action': 'invalid_turn', 'reason': 'not an integer'})
 
             if player.gameid != gameid:

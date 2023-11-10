@@ -72,13 +72,14 @@ class GameSocket {
             // Player events
             case "game_joined": {
                 this.game.opponent = json.opponent;
-                this.game.game_id = json.id;
-                this.game.result = undefined;
+                this.game.game_id = json.gameid;
+                this.game.result = "";
                 this.game.state = "ingame_waiting";
                 break;
             }
             case "game_left": {
-                this.game.opponent = undefined;
+                this.game.opponent = {};
+                this.game.game_id = undefined;
                 this.game.state = "ended";
                 break;
             }
@@ -153,6 +154,11 @@ class GameSocket {
     ready() {
         this.action('ready');
         this.game.state = "ready";
+    }
+
+    turn(num) {
+        let data = {"column": num, "gameid": this.game.game_id};
+        this.action("turn", data);
     }
 
     action(action, data) {

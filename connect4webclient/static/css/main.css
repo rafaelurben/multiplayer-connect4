@@ -2,15 +2,22 @@
 
 :root {
     --col-transparent: rgba(0, 0, 0, 0);
-    --col-team-0: #f44336;
+    --col-team-2: #f44336;
     --col-team-1: #2196f3;
 }
 
-.t0-fg { color: var(--col-team-0); }
 .t1-fg { color: var(--col-team-1); }
-.t0-bg { background-color: var(--col-team-0); }
+.t2-fg { color: var(--col-team-2); }
 .t1-bg { background-color: var(--col-team-1); }
+.t2-bg { background-color: var(--col-team-2); }
 
+
+/* Board */
+
+#board-table td {
+    border: 1px solid white;
+    height: 50px; /* temporary */
+}
 
 /* Utils */
 
