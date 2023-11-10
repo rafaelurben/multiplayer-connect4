@@ -9,7 +9,7 @@ class GameSocket {
 
     connect() {
         let prot = location.protocol === "http:" ? "ws://" : "wss://";
-        
+
         let newthis = this; // Ugly hack to get around the fact that "this" is not the same in the callback
         let newsock = new WebSocket(prot + location.host + "/ws");
 
@@ -60,6 +60,7 @@ class GameSocket {
                 this.game.client.mode = json.mode;
                 if (json.mode === "player") {
                     this.game.player = json.player;
+                    this.ready();
                 }
                 break;
             }
@@ -68,6 +69,39 @@ class GameSocket {
                 this.game.player = {};
                 break;
             }
+            // Player events
+            case "game_joined": {
+                this.game.opponent = json.opponent;
+                this.game.game_id = json.id;
+                this.game.result = undefined;
+                this.game.state = "ingame_waiting";
+                break;
+            }
+            case "game_left": {
+                this.game.opponent = undefined;
+                this.game.state = "ended";
+                break;
+            }
+            case "game_result": {
+                this.game.result = json.state;
+                this.game.state = "ended_result"
+                break;
+            }
+            case "turn_request": {
+                this.game.game_board = json.board;
+                this.game.state = "ingame_turn";
+                break;
+            }
+            case "turn_accepted": {
+                this.game.game_board = json.board;
+                this.game.state = "ingame_waiting";
+                break;
+            }
+            case "invalid_turn": {
+                alert("Something went wrong as you were able to submit an invalid turn!");
+                break;
+            }
+            // Fallback
             default: {
                 console.warn("[WS] Unknown action received:", json);
             }
@@ -109,9 +143,16 @@ class GameSocket {
             console.error("[WS] Not joined!");
             return;
         }
-        if (confirm("Are you sure you want to leave?")) {
+
+        if (this.game.client.mode !== "player" || (this.game.state && (this.game.state === "ready" ||
+            this.game.state.startsWith("ended"))) || confirm("Are you sure you want to leave?")) {
             this.send({"action": "leave_room"});
         }
+    }
+
+    ready() {
+        this.action('ready');
+        this.game.state = "ready";
     }
 
     action(action, data) {

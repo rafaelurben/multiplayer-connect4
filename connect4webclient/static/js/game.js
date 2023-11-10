@@ -7,10 +7,13 @@ class Game {
         }
         this.player = {
             name: undefined,
-            team: undefined,
             id: undefined,
         }
-
+        this.opponent = {
+            name: undefined,
+            id: undefined
+        }
+        this.game_id = undefined;
         this.game_board = "0000000\n0000000\n0000000\n0000000\n0000000\n0000000\n";
 
         this.__state = undefined;
