@@ -91,7 +91,9 @@ class Game {
             console.log(boardRow);
             let $tr = $('<tr>', {class: "board-row"});
             for (const c of boardRow) {
-                $tr.append($("<td>", {class: `t${c}-bg`}));
+                let $td = $("<td>", {class: `t${c}-bg`});
+                $td.append('<div>');
+                $tr.append($td);
             }
             rows.push($tr);
         })

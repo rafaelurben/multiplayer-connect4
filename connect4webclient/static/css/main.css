@@ -14,9 +14,16 @@
 
 /* Board */
 
+table .player-turn-btn {
+    margin-bottom: .5rem;
+}
+
 #board-table td {
     border: 1px solid white;
-    height: 50px; /* temporary */
+}
+
+#board-table td > * {
+    aspect-ratio: 1 / 1;
 }
 
 /* Utils */
