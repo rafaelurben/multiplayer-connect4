@@ -13,7 +13,6 @@ function setupKeybinds(socket) {
 
         if (event.key === "f") {
             // f: Toggle full screen
-            event.preventDefault();
             if (document.fullscreenElement === null) {
                 document.documentElement.requestFullscreen();
             } else {
@@ -21,12 +20,30 @@ function setupKeybinds(socket) {
             }
         } else if (event.key === "l") {
             // l: Leave room
-            event.preventDefault();
             socket.leave();
         } else if (event.key === "q") {
             // q: Show QR code
-            event.preventDefault();
             $("#show_qrcode").click();
+        } else if (event.key === "r") {
+            $("#player-ready-btn").click();
+        } else if (event.key === "1") {
+            $('.player-turn-btn[data-col="0"]').click()
+        } else if (event.key === "2") {
+            $('.player-turn-btn[data-col="1"]').click()
+        } else if (event.key === "3") {
+            $('.player-turn-btn[data-col="2"]').click()
+        } else if (event.key === "4") {
+            $('.player-turn-btn[data-col="3"]').click()
+        } else if (event.key === "5") {
+            $('.player-turn-btn[data-col="4"]').click()
+        } else if (event.key === "6") {
+            $('.player-turn-btn[data-col="5"]').click()
+        } else if (event.key === "7") {
+            $('.player-turn-btn[data-col="6"]').click()
+        } else {
+            return;
         }
+
+        event.preventDefault();
     });
 }

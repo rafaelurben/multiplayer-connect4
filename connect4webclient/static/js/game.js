@@ -48,6 +48,7 @@ class Game {
 
         if (this.public_url !== undefined && this.public_url !== null) {
             $("#show_qrcode").removeClass("hidden");
+            $("#show_qrcode").attr("disabled", false);
             let apibase = "https://api.qrserver.com/v1/create-qr-code/?format=svg&qzone=1&size=500x500&color=fff&bgcolor=212529&data="
             let url = apibase + encodeURIComponent(this.public_url);
             $("#qrcode_image").attr("src", url);
