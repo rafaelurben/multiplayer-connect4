@@ -88,6 +88,8 @@ class GameServer(BasicServer):
                      wsid, Player.get(wsid).name)
             player = Player.get(wsid)
             player.delete()
+            if player.gameid:
+                await self.delete_game(Game.games[player.gameid])
             await self.send_to_joined({'action': 'player_left', 'id': wsid})
             return await ws.send_json({'action': 'room_left'})
         elif action == 'ready':
