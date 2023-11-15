@@ -73,6 +73,7 @@ class GameSocket {
             case "game_joined": {
                 this.game.opponent = json.opponent;
                 this.game.game_id = json.gameid;
+                this.game.game_board = json.board;
                 this.game.result = "";
                 this.game.state = "ingame_waiting";
                 break;

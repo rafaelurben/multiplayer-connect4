@@ -42,9 +42,9 @@ class GameServer(BasicServer):
                 {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
 
             await self.send_to_one(
-                {"action": "game_joined", "gameid": game.id, "opponent": p2.as_dict()}, p1.id)
+                {"action": "game_joined", "gameid": game.id, "opponent": p2.as_dict(), "board": game.p1board()}, p1.id)
             await self.send_to_one(
-                {"action": "game_joined", "gameid": game.id, "opponent": p1.as_dict()}, p2.id)
+                {"action": "game_joined", "gameid": game.id, "opponent": p1.as_dict(), "board": game.p2board()}, p2.id)
 
             await self.send_to_one(
                 {"action": "turn_request", "gameid": game.id, "board": game.p1board()}, p1.id)
