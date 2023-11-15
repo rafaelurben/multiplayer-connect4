@@ -91,7 +91,7 @@ class Game {
 
     renderGameBoard() {
         let tableRows = this.getRenderedBoardTableRows();
-        let $tbody = $("#board-table tbody");
+        let $tbody = $("#player-board-table tbody");
         $tbody.children().remove('tr.board-row');
         $tbody.append(...tableRows);
 

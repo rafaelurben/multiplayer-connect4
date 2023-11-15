@@ -17,15 +17,15 @@
 
 /* Board */
 
-#board-table .player-turn-btn {
+.board-table .player-turn-btn {
     margin-bottom: .5rem;
 }
 
-#board-table .board-cell {
+.board-table .board-cell {
     background-color: var(--col-frame);
 }
 
-#board-table .board-cell .board-coin {
+.board-table .board-cell .board-coin {
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     margin: 0.2rem;

@@ -62,7 +62,7 @@
                 </div>
             </div>
             <!-- Player screen -->
-            <div class="modeblock mode_player hidden d-flex flex-column">
+            <div id="player-screen" class="modeblock mode_player hidden d-flex flex-column">
                 <!-- Game -->
                 <div id="block-player-game" class="stateblock state_ingame_waiting state_ingame_turn state_ended state_ended_result d-flex flex-column flex-grow-1 gap-2">
                     <span class="m-2">Your opponent: <b class="t2-fg" id="player-opponent"></b>.
@@ -70,42 +70,42 @@
                         <i class="stateblock state_ingame_waiting">It's your <span class="t2-fg">opponent's turn!</span></i>
                     </span>
                     <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1">
-                        <table id="board-table">
+                        <table id="player-board-table" class="board-table">
                             <thead>
                                 <tr>
                                     <th>
                                         <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(0)" data-col="0">
-                                            ⬇️
+                                            1
                                         </button>
                                     </th>
                                     <th>
                                         <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(1)" data-col="1">
-                                            ⬇️
+                                            2
                                         </button>
                                     </th>
                                     <th>
                                         <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(2)" data-col="2">
-                                            ⬇️
+                                            3
                                         </button>
                                     </th>
                                     <th>
                                         <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(3)" data-col="3">
-                                            ⬇️
+                                            4
                                         </button>
                                     </th>
                                     <th>
                                         <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(4)" data-col="4">
-                                            ⬇️
+                                            5
                                         </button>
                                     </th>
                                     <th>
                                         <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(5)" data-col="5">
-                                            ⬇️
+                                            6
                                         </button>
                                     </th>
                                     <th>
                                         <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(6)" data-col="6">
-                                            ⬇️
+                                            7
                                         </button>
                                     </th>
                                 </tr>
