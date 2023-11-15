@@ -1,7 +1,6 @@
 class GameSocket {
     constructor(game) {
         this.socket = undefined;
-        this.wsid = undefined;
         this.game = game;
 
         this.connect();
@@ -50,7 +49,6 @@ class GameSocket {
                 break;
             }
             case "connected": {
-                this.wsid = json.id;
                 this.game.client.id = json.id;
                 this.game.client.mode = "connected";
                 this.game.public_url = json.public_url;

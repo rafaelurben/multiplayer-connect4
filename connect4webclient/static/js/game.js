@@ -90,31 +90,50 @@ class Game {
     }
 
     renderGameBoard() {
+        $(".player-turn-btn").attr('disabled', true);
+
         let tableRows = this.getRenderedBoardTableRows();
         let $tbody = $("#player-board-table tbody");
         $tbody.children().remove('tr.board-row');
         $tbody.append(...tableRows);
-
-        if (this.state === "ingame_turn") {
-            $(".player-turn-btn").attr('disabled', false);
-            // $(".player-turn-btn").forEach(btn => btn);
-            // todo: disable correct btns
-        } else {
-            $(".player-turn-btn").attr('disabled', true);
-        }
     }
 
     getRenderedBoardTableRows() {
-        let rows = [];
-        this.game_board.trim().split("\n").forEach(boardRow => {
+        let canPlay = this.client.mode === "player" && this.state === "ingame_turn";
+
+        let resultRows = [];
+        let boardRows = this.game_board.trim().split("\n");
+
+        // Keep track of whether a column has already had a coin in it
+        let colsHaveCoins = new Array(boardRows[0].length).fill(false);
+
+        // Loop through the board rows in reverse order (start from bottom to find first empty cell)
+        for (let rowIndex = boardRows.length - 1; rowIndex >= 0; rowIndex--) {
+            let boardRow = boardRows[rowIndex].trim();
+
             let $tr = $('<tr>', {class: "board-row"});
-            for (const c of boardRow) {
+            for (let colIndex = 0; colIndex < boardRow.length; colIndex++) {
+                let teamNum = boardRow[colIndex];
+
                 let $td = $("<td>", {class: "board-cell"});
-                $td.append($('<div>', {class: `board-coin t${c}-bg`}));
+                let $coin = $('<div>', {class: `board-coin t${teamNum}-bg`});
+
+                if (canPlay && teamNum === "0") {
+                    if (!colsHaveCoins[colIndex]) {
+                        $coin.addClass('board-coin-clickable');
+                        $td.on('click', () => {sock.turn(colIndex)});
+                        colsHaveCoins[colIndex] = true;
+
+                        // enable corresponding column button
+                        $(`.player-turn-btn[data-col="${colIndex}"]`).prop('disabled', false);
+                    }
+                }
+
+                $td.append($coin);
                 $tr.append($td);
             }
-            rows.push($tr);
-        })
-        return rows;
+            resultRows.unshift($tr);
+        }
+        return resultRows;
     }
 }

@@ -3,16 +3,32 @@
 :root {
     --col-transparent: rgba(0, 0, 0, 0);
     --col-frame: #003466;
-    --col-team-0: #216da5;
+    --col-coin-empty: #216da5;
+    --col-coin-flashing: #87c4f6;
+    --col-team-0: var(--col-coin-empty);
     --col-team-1: #fec005;
     --col-team-2: #f43f19;
 }
 
-.t1-fg { color: var(--col-team-1); }
-.t2-fg { color: var(--col-team-2); }
-.t0-bg { background-color: var(--col-team-0); }
-.t1-bg { background-color: var(--col-team-1); }
-.t2-bg { background-color: var(--col-team-2); }
+.t1-fg {
+    color: var(--col-team-1);
+}
+
+.t2-fg {
+    color: var(--col-team-2);
+}
+
+.t0-bg {
+    background-color: var(--col-team-0);
+}
+
+.t1-bg {
+    background-color: var(--col-team-1);
+}
+
+.t2-bg {
+    background-color: var(--col-team-2);
+}
 
 
 /* Board */
@@ -29,6 +45,20 @@
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     margin: 0.2rem;
+}
+
+.board-table .board-cell .board-coin.board-coin-clickable {
+    cursor: pointer;
+    animation: coin-clickable 1s infinite ease-in-out alternate;
+}
+
+@keyframes coin-clickable {
+    0% {
+        background-color: var(--col-coin-empty);
+    }
+    100% {
+        background-color: var(--col-coin-flashing);
+    }
 }
 
 /* Utils */
