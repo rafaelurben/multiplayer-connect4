@@ -98,7 +98,7 @@ class GameServer(BasicServer):
             return await self.create_games()
         elif action == 'turn':
             player = Player.get(wsid)
-            print(data)
+
             try:
                 gameid = int(data.get("gameid"))
                 col = int(data.get("column"))
@@ -118,8 +118,13 @@ class GameServer(BasicServer):
 
             game.make_turn(pnum, col)
 
-            thisboard = game.p1board() if pnum == 1 else game.p2board()
-            otherboard = game.p2board() if pnum == 1 else game.p1board()
+            p1board = game.p1board()
+            p2board = game.p2board()
+
+            otherid = game.p2.id if pnum == 1 else game.p1.id
+
+            thisboard = p1board if pnum == 1 else p2board
+            otherboard = p2board if pnum == 1 else p1board
 
             await self.send_to_one(
                 {"action": "turn_accepted", "board": thisboard}, wsid)
@@ -129,24 +134,24 @@ class GameServer(BasicServer):
             if game.is_finished:  # if game ended
                 # Notify client if won, lost or tie
                 await self.send_to_one(
-                    {"action": "game_result", "gameid": game.id,
+                    {"action": "game_result", "gameid": game.id, "board": p1board,
                      "state": "won" if game.winning_nr == 1 else "lost" if game.winning_nr == 2 else "tie"},
                     game.p1.id)
                 await self.send_to_one(
-                    {"action": "game_result", "gameid": game.id,
+                    {"action": "game_result", "gameid": game.id, "board": p2board,
                      "state": "won" if game.winning_nr == 2 else "lost" if game.winning_nr == 1 else "tie"},
                     game.p2.id)
 
                 # Notify spectators and delete game
                 await self.send_to_spectators(
                     {"action": "game_ended", "gameid": game.id,
-                     "winning_nr": game.winning_nr, "winner": game.winner}
+                     "winning_nr": game.winning_nr, "winner": game.winner, "board": p1board}
                 )
                 await self.delete_game(game)
             else:
                 await self.send_to_one(
                     {"action": "turn_request", "gameid": game.id, "board": otherboard},
-                    game.p2.id if pnum == 1 else game.p1.id)
+                    otherid)
             return True
 
         return False

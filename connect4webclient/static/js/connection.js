@@ -77,30 +77,29 @@ class GameSocket {
             case "game_joined": {
                 this.game.opponent = json.opponent;
                 this.game.game_id = json.gameid;
-                this.game.game_board = json.board;
                 this.game.result = "";
                 this.game.state = "ingame_waiting";
+                this.game.game_board = json.board;
                 break;
             }
             case "game_left": {
-                this.game.opponent = {};
-                this.game.game_id = undefined;
                 this.game.state = "ended";
                 break;
             }
             case "game_result": {
                 this.game.result = json.state;
                 this.game.state = "ended_result"
+                this.game.game_board = json.board;
                 break;
             }
             case "turn_request": {
-                this.game.game_board = json.board;
                 this.game.state = "ingame_turn";
+                this.game.game_board = json.board;
                 break;
             }
             case "turn_accepted": {
-                this.game.game_board = json.board;
                 this.game.state = "ingame_waiting";
+                this.game.game_board = json.board;
                 break;
             }
             case "invalid_turn": {

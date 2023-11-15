@@ -1,4 +1,3 @@
-
 class Game {
     constructor() {
         this.client = {
@@ -15,38 +14,38 @@ class Game {
         }
         this.game_id = undefined;
         this.result = "";
-        this.game_board = "0000000\n0000000\n0000000\n0000000\n0000000\n0000000\n";
+        this.__game_board = undefined;
 
         this.__state = undefined;
 
-        this.public_url = undefined;
+        this.__public_url = undefined;
     }
 
-    get state() { return this.__state; }
-    set state(value) { this.__state = value; this.handleStateUpdate(); }
+    get state() {
+        return this.__state;
+    }
 
-    updateUi() {
-        $(`.modeblock:not(#mode_${this.client.mode})`).addClass("hidden");
-        $(`.modeblock.mode_${this.client.mode}`).removeClass("hidden");
-        $(`.stateblock:not(#state_${this.state})`).addClass("hidden");
-        $(`.stateblock.state_${this.state}`).removeClass("hidden");
+    set state(value) {
+        this.__state = value;
+        this.updateUi();
+    }
 
-        if (this.client.mode === "connected") {
-            $("#header_status").text(`Connected (#${this.client.id})`);
-        } else
-        if (this.client.mode === "player") {
-            $("#header_status").html(`Playing as <b>${this.player.name}\xa0(#${this.client.id})</b>`);
-            this.renderPlayerGame();
-        } else
-        if (this.client.mode === "spectator" || this.client.mode === "master") {
-            if (this.client.mode === "master") {
-                $("#header_status").text(`Hosting (#${this.client.id})`);
-            } else {
-                $("#header_status").text(`Spectating (#${this.client.id})`);
-            }
-        }
+    get game_board() {
+        return this.__game_board;
+    }
 
-        if (this.public_url !== undefined && this.public_url !== null) {
+    set game_board(value) {
+        this.__game_board = value;
+        this.renderGameBoard();
+    }
+
+    get public_url() {
+        return this.__public_url;
+    }
+
+    set public_url(value) {
+        this.__public_url = value;
+        if (value !== undefined && value !== null) {
             $("#show_qrcode").removeClass("hidden");
             $("#show_qrcode").attr("disabled", false);
             let apibase = "https://api.qrserver.com/v1/create-qr-code/?format=svg&qzone=1&size=500x500&color=fff&bgcolor=212529&data="
@@ -56,7 +55,27 @@ class Game {
         }
     }
 
-    renderPlayerGame() {
+    updateUi() {
+        $(`.modeblock:not(#mode_${this.client.mode})`).addClass("hidden");
+        $(`.modeblock.mode_${this.client.mode}`).removeClass("hidden");
+        $(`.stateblock:not(#state_${this.state})`).addClass("hidden");
+        $(`.stateblock.state_${this.state}`).removeClass("hidden");
+
+        if (this.client.mode === "connected") {
+            $("#header_status").text(`Connected (#${this.client.id})`);
+        } else if (this.client.mode === "player") {
+            $("#header_status").html(`Playing as <b>${this.player.name}\xa0(#${this.client.id})</b>`);
+            this.renderPlayerUI();
+        } else if (this.client.mode === "spectator" || this.client.mode === "master") {
+            if (this.client.mode === "master") {
+                $("#header_status").text(`Hosting (#${this.client.id})`);
+            } else {
+                $("#header_status").text(`Spectating (#${this.client.id})`);
+            }
+        }
+    }
+
+    renderPlayerUI() {
         $("#player-opponent").text(`${this.opponent.name} (${this.opponent.id})`);
 
         let $readyBtn = $("#player-ready-btn");
@@ -68,20 +87,20 @@ class Game {
 
         let $resultText = $("#player-result");
         $resultText.text(this.result === "won" ? "You won!" : this.result === "lost" ? "You lost!!" : this.result === "tie" ? "It's a tie!" : "Game cancelled!");
+    }
 
-        if (this.state.startsWith("ingame")) {
-            let tableRows = this.getRenderedBoardTableRows();
-            let $tbody = $("#board-table tbody");
-            $tbody.children().remove('tr.board-row');
-            $tbody.append(...tableRows);
+    renderGameBoard() {
+        let tableRows = this.getRenderedBoardTableRows();
+        let $tbody = $("#board-table tbody");
+        $tbody.children().remove('tr.board-row');
+        $tbody.append(...tableRows);
 
-            if (this.state === "ingame_turn") {
-                $(".player-turn-btn").attr('disabled', false);
-                // $(".player-turn-btn").forEach(btn => btn);
-                // todo: disable correct btns
-            } else {
-                $(".player-turn-btn").attr('disabled', true);
-            }
+        if (this.state === "ingame_turn") {
+            $(".player-turn-btn").attr('disabled', false);
+            // $(".player-turn-btn").forEach(btn => btn);
+            // todo: disable correct btns
+        } else {
+            $(".player-turn-btn").attr('disabled', true);
         }
     }
 
@@ -98,9 +117,4 @@ class Game {
         })
         return rows;
     }
-
-    handleStateUpdate() {
-        this.updateUi();
-    }
-
 }
