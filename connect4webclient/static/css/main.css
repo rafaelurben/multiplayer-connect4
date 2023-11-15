@@ -1,0 +1,127 @@
+/* Team colors */
+
+:root {
+    --col-transparent: rgba(0, 0, 0, 0);
+    --col-frame: #003466;
+    --col-coin-empty: #216da5;
+    --col-coin-flashing: #87c4f6;
+    --col-team-0: var(--col-coin-empty);
+    --col-team-1: #fec005;
+    --col-team-2: #f43f19;
+}
+
+.t1-fg {
+    color: var(--col-team-1);
+}
+
+.t2-fg {
+    color: var(--col-team-2);
+}
+
+.t0-bg {
+    background-color: var(--col-team-0);
+}
+
+.t1-bg {
+    background-color: var(--col-team-1);
+}
+
+.t2-bg {
+    background-color: var(--col-team-2);
+}
+
+
+/* Board */
+
+.board-table .player-turn-btn {
+    margin-bottom: .5rem;
+}
+
+.board-table .board-cell {
+    background-color: var(--col-frame);
+}
+
+.board-table .board-cell .board-coin {
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    margin: 0.2rem;
+}
+
+.board-table .board-cell .board-coin.board-coin-clickable {
+    cursor: pointer;
+    animation: coin-clickable 1s infinite ease-in-out alternate;
+}
+
+@keyframes coin-clickable {
+    0% {
+        background-color: var(--col-coin-empty);
+    }
+    100% {
+        background-color: var(--col-coin-flashing);
+    }
+}
+
+/* Utils */
+
+* {
+    /* Disable text selection */
+    user-select: none;
+    /* Disable double tap to zoom */
+    touch-action: manipulation;
+}
+
+body {
+    width: 100vw;
+    width: 100dvw;
+    height: 100vh;
+    height: 100dvh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.userhidden {
+    display: none !important;
+}
+
+#maincontent > div {
+    width: 100%;
+    height: 100%;
+}
+
+*[draggable] {
+    /* fallback if grab cursor is unsupported */
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+*[draggable]:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
+
+.dragover {
+    outline: 2px dashed grey;
+}
+
+svg.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    fill: currentColor;
+    overflow: visible;
+}
+
+/* Input */
+
+input[type="text"]:invalid {
+    border: 1px solid red;
+}
+
+input[type="text"]:valid {
+    border: 1px solid green;
+}

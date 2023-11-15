@@ -93,7 +93,6 @@ class BasicServer:
         ws_current = web.WebSocketResponse()
         wsid = self.get_next_id()
 
-        ws_current.set_cookie("multiplayergame_wsid", str(wsid), samesite="Strict")
         await ws_current.prepare(request)
 
         # Connect
