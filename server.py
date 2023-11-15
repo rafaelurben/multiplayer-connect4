@@ -35,17 +35,17 @@ if __name__ == '__main__':
 
     clientdir = Path(__file__).parent / 'connect4webclient'
 
-    if len(sys.argv) > 1 and "--no-ngrok" in sys.argv:
-        log.info("[Server] Starting server without ngrok tunnel.")
-        main(clientdir)
-    elif is_ngrok_available():
-        log.info("[Server] Opening ngrok tunnel...")
-        with NgrokTunnel() as ngrok_url:
-            log.info("[Server] Tunnel URL: %s", ngrok_url)
-            main(clientdir, public_url=ngrok_url)
-    else:
-        log.warning(
-            "[Server] ngrok is not in PATH! Please install it from https://ngrok.com/download or add it to PATH.")
-        log.warning("[Server] Starting server without ngrok tunnel.")
-        log.info("[Server] Using default values http://localhost:80")
-        main(clientdir)
+    if "--ngrok" in sys.argv:
+        if is_ngrok_available():
+            log.info("[Server] Opening ngrok tunnel...")
+            with NgrokTunnel() as ngrok_url:
+                log.info("[Server] Tunnel URL: %s", ngrok_url)
+                main(clientdir, public_url=ngrok_url)
+        else:
+            log.warning(
+                "[Server] ngrok is not in PATH! Please install it from https://ngrok.com/download or add it to PATH.")
+            log.info("[Server] Starting server without ngrok tunnel.")
+
+    url = os.environ.get('PUBLIC_URL', 'http://localhost')
+    log.info(f"[Server] URL: {url}")
+    main(clientdir, public_url=url if "--public" in sys.argv else None)
