@@ -54,10 +54,10 @@
                         <button class="btn btn-light w-100" onclick="sock.joinAsSpectator()">Connect as spectator</button>
                     </div>
                     <div class="col-12">
-                        <div id="lobby_join_player_form" class="input-group">
+                        <form id="lobby_join_player_form" class="input-group" onsubmit="event.preventDefault(); sock.joinAsPlayer()">
                             <input id="nameinput" class="form-control" type="text" name="name" placeholder="Enter your name" pattern="^[a-zA-Z0-9_\- ]{3,20}$" maxlength="20" required>
-                            <button class="btn btn-primary" onclick="sock.joinAsPlayer()">Join as player</button>
-                        </div>
+                            <input type="submit" class="btn btn-primary" value="Join as player">
+                        </form>
                     </div>
                 </div>
             </div>
