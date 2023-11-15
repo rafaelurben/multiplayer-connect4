@@ -69,11 +69,10 @@ class Game {
         $resultText.text(this.result === "won" ? "You won!" : this.result === "lost" ? "You lost!!" : this.result === "tie" ? "It's a tie!" : "Game cancelled!");
 
         if (this.state.startsWith("ingame")) {
-            let tablerows = this.getRenderedBoardTableRows();
-            console.log("tablerows", tablerows);
-            let $tbody = $("#board-table");
+            let tableRows = this.getRenderedBoardTableRows();
+            let $tbody = $("#board-table tbody");
             $tbody.children().remove('tr.board-row');
-            $tbody.append(...tablerows);
+            $tbody.append(...tableRows);
 
             if (this.state === "ingame_turn") {
                 $(".player-turn-btn").attr('disabled', false);
@@ -88,11 +87,10 @@ class Game {
     getRenderedBoardTableRows() {
         let rows = [];
         this.game_board.trim().split("\n").forEach(boardRow => {
-            console.log(boardRow);
             let $tr = $('<tr>', {class: "board-row"});
             for (const c of boardRow) {
-                let $td = $("<td>", {class: `t${c}-bg`});
-                $td.append('<div>');
+                let $td = $("<td>", {class: "board-cell"});
+                $td.append($('<div>', {class: `board-coin t${c}-bg`}));
                 $tr.append($td);
             }
             rows.push($tr);

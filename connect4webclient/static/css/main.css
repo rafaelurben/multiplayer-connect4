@@ -2,28 +2,33 @@
 
 :root {
     --col-transparent: rgba(0, 0, 0, 0);
-    --col-team-2: #f44336;
-    --col-team-1: #2196f3;
+    --col-frame: #003466;
+    --col-team-0: #216da5;
+    --col-team-1: #fec005;
+    --col-team-2: #f43f19;
 }
 
 .t1-fg { color: var(--col-team-1); }
 .t2-fg { color: var(--col-team-2); }
+.t0-bg { background-color: var(--col-team-0); }
 .t1-bg { background-color: var(--col-team-1); }
 .t2-bg { background-color: var(--col-team-2); }
 
 
 /* Board */
 
-table .player-turn-btn {
+#board-table .player-turn-btn {
     margin-bottom: .5rem;
 }
 
-#board-table td {
-    border: 1px solid white;
+#board-table .board-cell {
+    background-color: var(--col-frame);
 }
 
-#board-table td > * {
+#board-table .board-cell .board-coin {
     aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    margin: 0.2rem;
 }
 
 /* Utils */
