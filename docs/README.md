@@ -1,8 +1,8 @@
 # py4connect-server documentation
 
-This folder is automatically built to the [GitHub pages site](https://redesigned-disco-29ol1ov.pages.github.io).
+[This folder](https://github.com/rafaelurben/multiplayer-connect4/tree/main/docs) is automatically built to the [GitHub pages site](https://redesigned-disco-29ol1ov.pages.github.io).
 
-This project contains parts of [rafaelurben/multiplayergame](https://github.com/rafaelurben/multiplayergame).
+This project contains parts of [rafaelurben/multiplayer-lasergame](https://github.com/rafaelurben/multiplayer-lasergame).
 
 ## Table of Contents
 
