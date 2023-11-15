@@ -290,10 +290,9 @@ class GameServer(BasicServer):
     # Gameloop
 
     async def tick(self, ticknum):
-        """This loop could be used to ping players or check if there are games with too long inactive times"""
+        """Currently used to ping all clients every 10 seconds"""
 
-        # TODO
-        ...
+        await self.send_to_all({'action': 'ping', 'ticknum': ticknum})
 
     async def gameloop(self):
         """The main game loop"""
@@ -302,7 +301,7 @@ class GameServer(BasicServer):
 
         while True:
             await asyncio.gather(
-                asyncio.sleep(1 / 10),
+                asyncio.sleep(10),
                 self.tick(ticknum=ticknum),
             )
             ticknum += 1

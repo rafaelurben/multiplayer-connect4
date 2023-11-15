@@ -44,6 +44,10 @@ class GameSocket {
 
     onreceive(json) {
         switch (json.action) {
+            case "ping": {
+                console.log("[WS] Ping received!")
+                break;
+            }
             case "alert": {
                 alert(json.message);
                 break;

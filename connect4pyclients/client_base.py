@@ -103,5 +103,7 @@ class WSConnect4Client(ABC):
                 self.print_board(data["board"])
             case 'invalid_turn':
                 print("Invalid turn! Reason:", data["reason"])
+            case 'ping':
+                print("Ping received! The server is still alive, yay!")
             case _:  # default case
                 print(f"Action {action} not implemented!")

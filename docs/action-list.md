@@ -8,6 +8,7 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 - room_joined (mode: player/spectator/master)
 - room_left
 - alert (message)
+- ping
 
 ### Server => Player
 
