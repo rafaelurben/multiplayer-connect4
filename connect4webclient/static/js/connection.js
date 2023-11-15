@@ -69,6 +69,10 @@ class GameSocket {
                 this.game.player = {};
                 break;
             }
+            case "name_rejected": {
+                alert("Name rejected! Please try again. There might be a player with the same name already.");
+                break;
+            }
             // Player events
             case "game_joined": {
                 this.game.opponent = json.opponent;
