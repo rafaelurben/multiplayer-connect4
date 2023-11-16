@@ -94,8 +94,10 @@ class GameServer(BasicServer):
             return await ws.send_json({'action': 'room_left'})
         elif action == 'ready':
             player = Player.get(wsid)
-            player.is_ready = True
-            return await self.create_games()
+            player.is_ready = not player.is_ready
+            if player.is_ready:
+                await self.create_games()
+            return await ws.send_json({'action': 'ready_response', 'ready': player.is_ready})
         elif action == 'turn':
             player = Player.get(wsid)
 
@@ -198,7 +200,6 @@ class GameServer(BasicServer):
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
                 await ws.send_json({'action': 'room_joined', 'mode': 'player', 'player': player.as_dict()})
                 await self.send_to_spectators({'action': 'player_joined', 'id': wsid, 'player': player.as_dict()})
-                await self.create_games()
             else:
                 self.spectator_ids.append(wsid)
                 log.info('[WS] #%s started spectating!', wsid)

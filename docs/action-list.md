@@ -13,6 +13,7 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 ### Server => Player
 
 - name_rejected
+- ready_response
 - game_joined
 - game_result
 - game_left

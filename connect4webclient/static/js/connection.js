@@ -58,10 +58,15 @@ class GameSocket {
                 this.game.public_url = json.public_url;
                 break;
             }
+            case "ready_response": {
+                this.game.ready = json.ready;
+                break;
+            }
             case "room_joined": {
                 this.game.client.mode = json.mode;
                 if (json.mode === "player") {
                     this.game.player = json.player;
+                    this.game.state = "initial_join";
                     this.ready();
                 }
                 break;
@@ -82,6 +87,7 @@ class GameSocket {
                 this.game.result = "";
                 this.game.state = "ingame_waiting";
                 this.game.game_board = json.board;
+                this.game.ready = false;
                 break;
             }
             case "game_left": {
@@ -159,7 +165,6 @@ class GameSocket {
 
     ready() {
         this.action('ready');
-        this.game.state = "ready";
     }
 
     turn(num) {

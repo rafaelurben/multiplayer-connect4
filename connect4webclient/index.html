@@ -116,19 +116,22 @@
                         </table>
                     </div>
                 </div>
-                <!-- Ready -->
-                <div class="stateblock state_ready m-2 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-                    <h4>You're ready</h4>
-                    <span>Waiting for another player...</span>
+                <!-- Initial join -->
+                <div class="stateblock state_initial_join m-2 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                    <h4>Hey there!</h4>
+                    <span>As long as you're ready (see button below), you'll be automatically matched with another player!</span>
                 </div>
                 <!-- Game end / leaderboard -->
                 <div class="stateblock state_ended state_ended_result m-2 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-                    <h4>Game ended</h4>
-                    <span id="player-result">Look up to see the leaderboard.</span>
+                    <h4 id="player-result"></h4>
+                    <span>This game has reached its end.</span>
                 </div>
                 <!-- Menu bar -->
-                <div class="d-flex flex-row flex-wrap gap-2 p-2 mt-auto">
-                    <button id="player-ready-btn" class="btn ms-auto" onclick="sock.ready()" disabled>
+                <div class="stateblock state_ended state_ended_result state_initial_join d-flex flex-row flex-wrap gap-2 p-2 mt-auto">
+                    <div id="player-ready-display" class="p-1">
+                        <span><b>You're ready</b> - Waiting for another player...</span>
+                    </div>
+                    <button class="btn ms-auto" id="player-ready-btn" onclick="sock.ready()">
                         Ready
                     </button>
                 </div>

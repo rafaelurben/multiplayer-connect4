@@ -27,8 +27,8 @@ class WSConnect4Client(ABC):
     @classmethod
     def print_board(cls, board: str):
         print("0️⃣1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣")
-        print(board.replace("0", "⬜").replace("1", "🟦").replace("2", "🟥"))
-        print("-- Du bist 🟦 --")
+        print(board.replace("0", "🔵").replace("1", "🟡").replace("2", "🔴"))
+        print("-- You are: 🟡 --")
 
     @abstractmethod
     async def process_turn(self, board: str) -> int:
@@ -41,7 +41,7 @@ class WSConnect4Client(ABC):
         ...
 
     async def wait_for_ready(self):
-        """Random client is always ready to play, no need to wait!"""
+        """By default, the client is always ready to play, no need to wait!"""
         return
 
     async def main(self):
@@ -56,7 +56,7 @@ class WSConnect4Client(ABC):
                     except json.JSONDecodeError:
                         print("Message couldn't be read as json:", message)
         except websockets.exceptions.ConnectionClosedError:
-            print("ERROR: Die Verbindung zum Server wurde verloren!")
+            print("ERROR: The connection to the server was lost!")
 
     def start(self):
         """Start the client"""
@@ -104,6 +104,8 @@ class WSConnect4Client(ABC):
             case 'invalid_turn':
                 print("Invalid turn! Reason:", data["reason"])
             case 'ping':
-                print("Ping received! The server is still alive, yay!")
+                ...
+            case 'ready_response':
+                ...
             case _:  # default case
                 print(f"Action {action} not implemented!")

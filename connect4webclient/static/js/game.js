@@ -17,6 +17,7 @@ class Game {
         this.__game_board = undefined;
 
         this.__state = undefined;
+        this.__ready = false;
 
         this.__public_url = undefined;
     }
@@ -28,6 +29,21 @@ class Game {
     set state(value) {
         this.__state = value;
         this.updateUi();
+    }
+
+    get ready() {
+        return this.__ready;
+    }
+
+    set ready(isReady) {
+        this.__ready = isReady;
+
+        let $readyBtn = $("#player-ready-btn");
+        $readyBtn.toggleClass("btn-success", !isReady);
+        $readyBtn.toggleClass("btn-danger", isReady);
+        $readyBtn.html(isReady ? "Ready" : "Press <kbd>r</kbd> when ready");
+
+        $("#player-ready-display").toggleClass("hidden", !isReady);
     }
 
     get game_board() {
@@ -79,14 +95,10 @@ class Game {
         $("#player-opponent").text(`${this.opponent.name} (${this.opponent.id})`);
 
         let $readyBtn = $("#player-ready-btn");
-        let isReady = !this.state.startsWith('ended');
-        $readyBtn.attr('disabled', isReady);
-        $readyBtn.toggleClass("btn-success", !isReady);
-        $readyBtn.toggleClass("btn-danger", isReady);
-        $readyBtn.text(isReady ? "Ready" : "Press to be ready");
+        $readyBtn.attr('disabled', this.state.startsWith("ingame"));
 
         let $resultText = $("#player-result");
-        $resultText.text(this.result === "won" ? "You won!" : this.result === "lost" ? "You lost!!" : this.result === "tie" ? "It's a tie!" : "Game cancelled!");
+        $resultText.text(this.result === "won" ? "You won!" : this.result === "lost" ? "You lost!r" : this.result === "tie" ? "It's a tie!" : "Game cancelled!");
     }
 
     renderGameBoard() {
