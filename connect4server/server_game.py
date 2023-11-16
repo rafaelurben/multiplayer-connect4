@@ -165,8 +165,7 @@ class GameServer(BasicServer):
             self.spectator_ids.remove(wsid)
             self.master_id = None
             log.info(
-                '[WS] #%s: The game master left the room! The next spectator '
-                'will become the new game master!', wsid)
+                '[WS] #%s: The game master left the room!', wsid)
             return await ws.send_json({'action': 'room_left'})
 
         # TODO: Add actions like kick player etc.
@@ -203,8 +202,7 @@ class GameServer(BasicServer):
             else:
                 self.spectator_ids.append(wsid)
                 log.info('[WS] #%s started spectating!', wsid)
-                if self.master_id is None:
-                    mode = "master"
+                if self.master_id is None and mode == 'master':
                     self.master_id = wsid
                     log.info('[WS] #%s is now the game master!', wsid)
                 else:
