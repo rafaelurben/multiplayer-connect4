@@ -130,13 +130,13 @@ class Game:
         # Check diagonal 1 for winners (top left to bottom right)
         startoff1 = min(row, col)  # shortest distance to top/left
         endoff1 = min(5 - row, 6 - col)  # shortest distance to bottom/right
-        diag1 = [b[r][r + (col - row)] for r in range(row - startoff1, row + endoff1 + 1)]
+        diag1 = [b[row - startoff1 + x][col - startoff1 + x] for x in range(startoff1 + endoff1 + 1)]
         if self._check_row_for_winner(diag1):
             return True
         # Check diagonal 2 for winners (top right to bottom left)
         startoff2 = min(row, 6 - col)  # shortest distance to top/right
         endoff2 = min(5 - row, col)  # shortest distance to bottom/left
-        diag2 = [b[r][col + startoff2 - r] for r in range(row - startoff2, row + endoff2 + 1)]
+        diag2 = [b[row - startoff2 + x][col + startoff2 - x] for x in range(startoff2 + endoff2 + 1)]
         if self._check_row_for_winner(diag2):
             return True
 
