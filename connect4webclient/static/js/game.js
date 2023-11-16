@@ -98,7 +98,7 @@ class Game {
         $readyBtn.attr('disabled', this.state.startsWith("ingame"));
 
         let $resultText = $("#player-result");
-        $resultText.text(this.result === "won" ? "You won!" : this.result === "lost" ? "You lost!r" : this.result === "tie" ? "It's a tie!" : "Game cancelled!");
+        $resultText.text(this.result === "won" ? "You won!" : this.result === "lost" ? "You lost!" : this.result === "tie" ? "It's a tie!" : "Game cancelled!");
     }
 
     renderGameBoard() {
