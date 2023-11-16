@@ -104,16 +104,15 @@ class Game {
     renderGameBoard() {
         $(".player-turn-btn").attr('disabled', true);
 
-        let tableRows = this.getRenderedBoardTableRows();
-        let $tbody = $("#player-board-table tbody");
-        $tbody.children().remove('tr.board-row');
-        $tbody.append(...tableRows);
+        let $table = $("#player-board-table");
+        $table.children().remove('.board-cell');
+        $table.append(...this.getRenderedBoardCells());
     }
 
-    getRenderedBoardTableRows() {
+    getRenderedBoardCells() {
         let canPlay = this.client.mode === "player" && this.state === "ingame_turn";
 
-        let resultRows = [];
+        let resultCells = [];
         let boardRows = this.game_board.trim().split("\n");
 
         // Keep track of whether a column has already had a coin in it
@@ -123,17 +122,16 @@ class Game {
         for (let rowIndex = boardRows.length - 1; rowIndex >= 0; rowIndex--) {
             let boardRow = boardRows[rowIndex].trim();
 
-            let $tr = $('<tr>', {class: "board-row"});
-            for (let colIndex = 0; colIndex < boardRow.length; colIndex++) {
+            for (let colIndex = boardRow.length - 1; colIndex >= 0; colIndex--) {
                 let teamNum = boardRow[colIndex];
 
-                let $td = $("<td>", {class: "board-cell"});
+                let $cell = $("<td>", {class: "board-cell"});
                 let $coin = $('<div>', {class: `board-coin t${teamNum}-bg`});
 
                 if (canPlay && teamNum === "0") {
                     if (!colsHaveCoins[colIndex]) {
                         $coin.addClass('board-coin-clickable');
-                        $td.on('click', () => {sock.turn(colIndex)});
+                        $cell.on('click', () => {sock.turn(colIndex)});
                         colsHaveCoins[colIndex] = true;
 
                         // enable corresponding column button
@@ -141,11 +139,10 @@ class Game {
                     }
                 }
 
-                $td.append($coin);
-                $tr.append($td);
+                $cell.append($coin);
+                resultCells.unshift($cell);
             }
-            resultRows.unshift($tr);
         }
-        return resultRows;
+        return resultCells;
     }
 }

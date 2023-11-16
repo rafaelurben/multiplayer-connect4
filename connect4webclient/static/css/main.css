@@ -33,11 +33,30 @@
 
 /* Board */
 
-.board-table .player-turn-btn {
-    margin-bottom: .5rem;
+#player-board-table {
+    flex-grow: 1;
+    margin: 1rem;
+}
+
+.board-table {
+    display: grid;
+    aspect-ratio: 7 / 7;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: 1.5fr repeat(6, 1fr);
+}
+
+.board-table .board-header-cell {
+    margin: 0.1rem;
+    display: flex;
+}
+
+.board-table .board-header-cell .player-turn-btn {
+    flex-grow: 1;
+    margin-bottom: 1rem;
 }
 
 .board-table .board-cell {
+    aspect-ratio: 1 / 1;
     background-color: var(--col-frame);
 }
 
@@ -58,6 +77,16 @@
     }
     100% {
         background-color: var(--col-coin-flashing);
+    }
+}
+
+#player-board-table-container {
+    flex-direction: column;
+}
+
+@media (orientation: portrait) {
+    #player-board-table-container {
+        flex-direction: row;
     }
 }
 

@@ -69,51 +69,45 @@
                         <i class="stateblock state_ingame_turn">It's <span class="t1-fg">your turn!</span></i>
                         <i class="stateblock state_ingame_waiting">It's your <span class="t2-fg">opponent's turn!</span></i>
                     </span>
-                    <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1">
-                        <table id="player-board-table" class="board-table">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(0)" data-col="0">
-                                            1
-                                        </button>
-                                    </th>
-                                    <th>
-                                        <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(1)" data-col="1">
-                                            2
-                                        </button>
-                                    </th>
-                                    <th>
-                                        <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(2)" data-col="2">
-                                            3
-                                        </button>
-                                    </th>
-                                    <th>
-                                        <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(3)" data-col="3">
-                                            4
-                                        </button>
-                                    </th>
-                                    <th>
-                                        <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(4)" data-col="4">
-                                            5
-                                        </button>
-                                    </th>
-                                    <th>
-                                        <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(5)" data-col="5">
-                                            6
-                                        </button>
-                                    </th>
-                                    <th>
-                                        <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(6)" data-col="6">
-                                            7
-                                        </button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Added by JS -->
-                            </tbody>
-                        </table>
+                    <div id="player-board-table-container" class="d-flex align-items-center justify-content-center flex-grow-1">
+                        <div id="player-board-table" class="board-table">
+                            <div class="board-header-cell">
+                                <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(0)" data-col="0">
+                                    1
+                                </button>
+                            </div>
+                            <div class="board-header-cell">
+                                <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(1)" data-col="1">
+                                    2
+                                </button>
+                            </div>
+                            <div class="board-header-cell">
+                                <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(2)" data-col="2">
+                                    3
+                                </button>
+                            </div>
+                            <div class="board-header-cell">
+                                <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(3)" data-col="3">
+                                    4
+                                </button>
+                            </div>
+                            <div class="board-header-cell">
+                                <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(4)" data-col="4">
+                                    5
+                                </button>
+                            </div>
+                            <div class="board-header-cell">
+                                <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(5)" data-col="5">
+                                    6
+                                </button>
+                            </div>
+                            <div class="board-header-cell">
+                                <button class="btn btn-sm btn-primary player-turn-btn" onclick="sock.turn(6)" data-col="6">
+                                    7
+                                </button>
+                            </div>
+                            <!-- Added by JS -->
+                        </div>
                     </div>
                 </div>
                 <!-- Initial join -->
