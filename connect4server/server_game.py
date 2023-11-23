@@ -17,37 +17,52 @@ class GameServer(BasicServer):
         self.clientdir = clientdir
         self.public_url = public_url
 
+        self.auto_matching_enabled = True
+
         self.spectator_ids = []
         self.master_id = None
 
         super().__init__()
 
-    async def create_games(self):
+    async def create_game(self, p1: Player, p2: Player) -> Game:
+        if p1.gameid is not None or p2.gameid is not None:
+            raise
+
+        game = Game(p1, p2)
+
+        await self.send_to_spectators(
+            {"action": "game_created", "gameid": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
+        await self.send_to_spectators(
+            {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
+
+        await self.send_to_one(
+            {"action": "game_joined", "gameid": game.id, "opponent": p2.as_dict(), "board": game.p1board()}, p1.id)
+        await self.send_to_one(
+            {"action": "game_joined", "gameid": game.id, "opponent": p1.as_dict(), "board": game.p2board()}, p2.id)
+
+        await self.send_to_one(
+            {"action": "turn_request", "gameid": game.id, "board": game.p1board()}, p1.id)
+
+        return game
+
+    async def auto_match_if_enabled(self):
         """
         Called after a player joins or a game ends.
         Creates new games if there are 2 or more players waiting.
+        Does nothing if auto matching is disabled.
         """
 
-        print("[Game] Trying to create games!")
+        if not self.auto_matching_enabled:
+            return
+
+        print("[Game] Trying to automatically match players...")
 
         players = list(filter(lambda p: p.is_ready, Player.everyone.values()))
         while len(players) >= 2:
             p1: Player = players.pop(random.randint(0, len(players) - 1))
             p2: Player = players.pop(random.randint(0, len(players) - 1))
-            game = Game(p1, p2)
 
-            await self.send_to_spectators(
-                {"action": "game_created", "gameid": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
-            await self.send_to_spectators(
-                {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
-
-            await self.send_to_one(
-                {"action": "game_joined", "gameid": game.id, "opponent": p2.as_dict(), "board": game.p1board()}, p1.id)
-            await self.send_to_one(
-                {"action": "game_joined", "gameid": game.id, "opponent": p1.as_dict(), "board": game.p2board()}, p2.id)
-
-            await self.send_to_one(
-                {"action": "turn_request", "gameid": game.id, "board": game.p1board()}, p1.id)
+            await self.create_game(p1, p2)
 
     async def delete_game(self, game: Game):
         """Called after a player disconnects or a game ends"""
@@ -96,7 +111,7 @@ class GameServer(BasicServer):
             player = Player.get(wsid)
             player.is_ready = not player.is_ready
             if player.is_ready:
-                await self.create_games()
+                await self.auto_match_if_enabled()
             return await ws.send_json({'action': 'ready_response', 'ready': player.is_ready})
         elif action == 'turn':
             player = Player.get(wsid)
@@ -167,6 +182,11 @@ class GameServer(BasicServer):
             log.info(
                 '[WS] #%s: The game master left the room!', wsid)
             return await ws.send_json({'action': 'room_left'})
+        elif action == 'toggle_auto_matching':
+            self.auto_matching_enabled = not self.auto_matching_enabled
+            log.info('Auto matching has been toggled an is now %s!' % ("ON" if self.auto_matching_enabled else "OFF"))
+            await ws.send_json({'action': 'auto_matching_toggled'})
+            return await self.auto_match_if_enabled()
 
         # TODO: Add actions like kick player etc.
 

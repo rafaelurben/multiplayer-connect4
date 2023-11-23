@@ -29,6 +29,10 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 - player_joined
 - player_left
 
+### Server => Master
+
+- auto_matching_toggled
+
 ## From Client to Server
 
 - join_room
@@ -38,3 +42,7 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 
 - ready
 - turn
+
+### Master => Server
+
+- toggle_auto_matching
