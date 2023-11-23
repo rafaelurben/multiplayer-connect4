@@ -9,6 +9,7 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 - room_left
 - alert (message)
 - ping
+- auto_matching_toggled
 
 ### Server => Player
 
@@ -28,10 +29,6 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 - game_deleted
 - player_joined
 - player_left
-
-### Server => Master
-
-- auto_matching_toggled
 
 ## From Client to Server
 

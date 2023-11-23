@@ -185,7 +185,7 @@ class GameServer(BasicServer):
         elif action == 'toggle_auto_matching':
             self.auto_matching_enabled = not self.auto_matching_enabled
             log.info('Auto matching has been toggled an is now %s!' % ("ON" if self.auto_matching_enabled else "OFF"))
-            await ws.send_json({'action': 'auto_matching_toggled'})
+            await self.send_to_joined({'action': 'auto_matching_toggled', 'enabled': self.auto_matching_enabled})
             return await self.auto_match_if_enabled()
 
         # TODO: Add actions like kick player etc.
@@ -217,7 +217,12 @@ class GameServer(BasicServer):
 
                 player = Player(name, wsid)
                 log.info('[WS] #%s joined as player "%s"', wsid, name)
-                await ws.send_json({'action': 'room_joined', 'mode': 'player', 'player': player.as_dict()})
+                await ws.send_json({
+                    'action': 'room_joined',
+                    'mode': 'player',
+                    'player': player.as_dict(),
+                    'auto_matching_enabled': self.auto_matching_enabled,
+                })
                 await self.send_to_spectators({'action': 'player_joined', 'id': wsid, 'player': player.as_dict()})
             else:
                 self.spectator_ids.append(wsid)
@@ -228,7 +233,11 @@ class GameServer(BasicServer):
                 else:
                     mode = "spectator"
 
-                await ws.send_json({'action': 'room_joined', 'mode': mode})
+                await ws.send_json({
+                    'action': 'room_joined',
+                    'mode': mode,
+                    'auto_matching_enabled': self.auto_matching_enabled,
+                })
 
             return True
         return False

@@ -64,6 +64,7 @@ class GameSocket {
             }
             case "room_joined": {
                 this.game.client.mode = json.mode;
+                this.game.auto_matching = json.auto_matching_enabled;
                 if (json.mode === "player") {
                     this.game.player = json.player;
                     this.game.state = "initial_join";
@@ -78,6 +79,10 @@ class GameSocket {
             }
             case "name_rejected": {
                 alert("Name rejected! Please try again. There might be a player with the same name already.");
+                break;
+            }
+            case "auto_matching_toggled": {
+                this.game.auto_matching = json.enabled;
                 break;
             }
             // Player events

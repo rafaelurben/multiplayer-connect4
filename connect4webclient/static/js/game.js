@@ -71,6 +71,16 @@ class Game {
         }
     }
 
+    set auto_matching(value) {
+        // Master:
+        let $btn = $("#toggle_auto_matching");
+        $btn.text(value ? "Disable auto matching" : "Enable auto matching");
+        $btn.toggleClass("btn-success", !value);
+        $btn.toggleClass("btn-danger", value);
+        // Player:
+        $("#player-waiting-text").text(value ? "Waiting for another player..." : "Waiting for the host to match you with another player...");
+    }
+
     updateUi() {
         $(`.modeblock:not(#mode_${this.client.mode})`).addClass("hidden");
         $(`.modeblock.mode_${this.client.mode}`).removeClass("hidden");
