@@ -74,7 +74,7 @@ class Game {
     set auto_matching(value) {
         // Master:
         let $btn = $("#toggle_auto_matching");
-        $btn.text(value ? "Disable auto matching" : "Enable auto matching");
+        $btn.html(value ? "Disable <u>a</u>uto matching" : "Enable <u>a</u>uto matching");
         $btn.toggleClass("btn-success", !value);
         $btn.toggleClass("btn-danger", value);
         // Player:

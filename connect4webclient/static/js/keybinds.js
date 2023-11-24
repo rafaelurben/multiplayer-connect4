@@ -27,6 +27,9 @@ function setupKeybinds(socket) {
         } else if (event.key === "r") {
             // r: Ready
             $("#player-ready-btn:not(:disabled)").click();
+        } else if (event.key === "a") {
+            // a: Toggle auto matching
+            $("#toggle_auto_matching:not(:disabled)").click();
         } else if (event.key === "1") {
             $('.player-turn-btn[data-col="0"]:not(:disabled)').click()
         } else if (event.key === "2") {
