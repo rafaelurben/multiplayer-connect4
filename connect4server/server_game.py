@@ -162,7 +162,7 @@ class GameServer(BasicServer):
                 # Notify spectators and delete game
                 await self.send_to_spectators(
                     {"action": "game_ended", "gameid": game.id,
-                     "winning_nr": game.winning_nr, "winner": game.winner, "board": p1board}
+                     "winning_nr": game.winning_nr, "winner": game.winner.as_dict(), "board": p1board}
                 )
                 await self.delete_game(game)
             else:
