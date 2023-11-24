@@ -43,3 +43,4 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 ### Master => Server
 
 - toggle_auto_matching
+- match_players

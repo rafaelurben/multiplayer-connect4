@@ -181,12 +181,35 @@ class GameServer(BasicServer):
             self.master_id = None
             log.info(
                 '[WS] #%s: The game master left the room!', wsid)
-            return await ws.send_json({'action': 'room_left'})
+            await ws.send_json({'action': 'room_left'})
+            return True
         elif action == 'toggle_auto_matching':
             self.auto_matching_enabled = not self.auto_matching_enabled
             log.info('Auto matching has been toggled an is now %s!' % ("ON" if self.auto_matching_enabled else "OFF"))
             await self.send_to_joined({'action': 'auto_matching_toggled', 'enabled': self.auto_matching_enabled})
-            return await self.auto_match_if_enabled()
+            await self.auto_match_if_enabled()
+            return True
+        elif action == "match_players":
+            try:
+                p1 = Player.get(int(data.get("p1id")))
+                p2 = Player.get(int(data.get("p2id")))
+
+                if p1.id == 0 or p2.id == 0:
+                    await ws.send_json(
+                        {'action': 'alert', 'message': "Couldn't find players!"}
+                    )
+                elif p1.gameid is not None or p2.gameid is not None:
+                    await ws.send_json(
+                        {'action': 'alert', 'message': "One of the selected players is already in a game!"})
+                elif p1.id == p2.id:
+                    await ws.send_json(
+                        {'action': 'alert', 'message': "Cannot match players with themselves!"}
+                    )
+                else:
+                    await self.create_game(p1, p2)
+            except (ValueError, IndexError):
+                await ws.send_json({'action': 'alert', 'message': "Failed to get players by id!"})
+            return True
 
         # TODO: Add actions like kick player etc.
 
