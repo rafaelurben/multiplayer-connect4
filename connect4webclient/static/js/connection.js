@@ -56,6 +56,8 @@ class GameSocket {
                 this.game.client.id = json.id;
                 this.game.client.mode = "connected";
                 this.game.public_url = json.public_url;
+
+                if (location.search === "?master") this.joinAsSpectator();
                 break;
             }
             case "ready_response": {
