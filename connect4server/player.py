@@ -53,3 +53,5 @@ class Player:
 tie = Player("Unentschieden", 0)
 # Special player used when a player was not found
 invalid = Player("Invalid", 0)
+
+Player.everyone.pop(0)

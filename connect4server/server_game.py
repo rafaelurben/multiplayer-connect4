@@ -105,7 +105,7 @@ class GameServer(BasicServer):
             player.delete()
             if player.gameid:
                 await self.delete_game(Game.games[player.gameid])
-            await self.send_to_joined({'action': 'player_left', 'id': wsid})
+            await self.send_to_spectators({'action': 'player_left', 'id': wsid})
             return await ws.send_json({'action': 'room_left'})
         elif action == 'ready':
             player = Player.get(wsid)
@@ -210,8 +210,18 @@ class GameServer(BasicServer):
             except (ValueError, IndexError):
                 await ws.send_json({'action': 'alert', 'message': "Failed to get players by id!"})
             return True
-
-        # TODO: Add actions like kick player etc.
+        elif action == 'kick_player':
+            try:
+                player = Player.get(int(data.get("pid")))
+                player.delete()
+                log.info('[WS] #%s was kicked from the room! ("%s")',
+                         player.id, player.name)
+                await self.send_to_spectators({'action': 'player_left', 'id': player.id})
+                await self.send_to_one({'action': 'room_left'}, player.id)
+                return await self.send_to_one(
+                    {'action': 'alert', 'message': '[Info] You have been kicked from the room!'}, player.id)
+            except (ValueError, IndexError):
+                await ws.send_json({'action': 'alert', 'message': "Failed to get player by id!"})
 
         return False
 
@@ -260,6 +270,7 @@ class GameServer(BasicServer):
                     'action': 'room_joined',
                     'mode': mode,
                     'auto_matching_enabled': self.auto_matching_enabled,
+                    'players': {p.id: p.as_dict() for p in Player.everyone.values()}
                 })
 
             return True
