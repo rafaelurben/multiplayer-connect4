@@ -33,10 +33,6 @@ class ManualClient(WSConnect4Client):
                 continue
         return col
 
-    async def wait_for_ready(self):
-        """Wait until user is ready to play again"""
-        return input("Press enter to play again...")
-
 
 if __name__ == "__main__":
     client = ManualClient(url=URL, name=NAME)

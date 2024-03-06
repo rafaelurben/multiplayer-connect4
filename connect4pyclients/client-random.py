@@ -8,6 +8,7 @@ Implementation: Rafael Urben - 2023
 """
 
 import random
+import time
 from client_base import WSConnect4Client
 
 NAME = None  # TODO: Enter your name
@@ -27,6 +28,10 @@ class RandomClient(WSConnect4Client):
         while board[col] != '0':
             col = random.randint(0, 6)
         return col
+
+    async def wait_for_ready(self):
+        """The client is always ready to play, but we'll wait 10s to not overload the server"""
+        return time.sleep(10)
 
 
 if __name__ == "__main__":

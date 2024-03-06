@@ -41,8 +41,8 @@ class WSConnect4Client(ABC):
         ...
 
     async def wait_for_ready(self):
-        """By default, the client is always ready to play, no need to wait!"""
-        return
+        """By default, the client is not automatically ready to play!"""
+        return input("Press enter to play again!")
 
     async def main(self):
         try:
@@ -83,6 +83,7 @@ class WSConnect4Client(ABC):
             case 'game_joined':
                 print("Game joined!", data)
             case 'game_result':
+                self.print_board(data["board"])
                 print("Game result:", data)
             case 'game_left':
                 print("Game left!", data)
