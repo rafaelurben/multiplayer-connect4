@@ -71,6 +71,8 @@ class GameSocket {
                     this.game.player = json.player;
                     this.game.state = "initial_join";
                     this.ready();
+                } else {
+                    this.game.players = json.players;
                 }
                 break;
             }
@@ -119,6 +121,15 @@ class GameSocket {
             }
             case "invalid_turn": {
                 alert("Something went wrong as you were able to submit an invalid turn!");
+                break;
+            }
+            // Server events
+            case "player_joined": {
+                this.game.players[json.id] = json.player;
+                break;
+            }
+            case "player_left": {
+                delete this.game.players[json.id];
                 break;
             }
             // Fallback

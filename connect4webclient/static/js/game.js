@@ -16,6 +16,8 @@ class Game {
         this.result = "";
         this.__game_board = undefined;
 
+        this.players = {};
+
         this.__state = undefined;
         this.__ready = false;
 
@@ -98,6 +100,8 @@ class Game {
             } else {
                 $("#header_status").text(`Spectating (#${this.client.id})`);
             }
+
+            this.renderSpectatorLobby();
         }
     }
 
@@ -110,6 +114,72 @@ class Game {
         let $resultText = $("#player-result");
         $resultText.text(this.result === "won" ? "You won!" : this.result === "lost" ? "You lost!" : this.result === "tie" ? "It's a tie!" : "Game cancelled!");
     }
+
+    renderSpectatorLobby() {
+        let kickplayerelem = $("#kick_player");
+        let playerlistelem = $("#playerlist");
+        playerlistelem.empty();
+        for (let player of Object.values(this.players)) {
+            // Create a new player element if it doesn't exist
+            let playerelem = $(`<div id="playerlist_player${player.id}" class="playerlist_player rounded-3">
+                <i>(${player.id})</i> ${player.name}
+            </div>`);
+            playerlistelem.append(playerelem);
+
+            playerelem.off('dragover');
+            playerelem.off('dragleave');
+            playerelem.off('drop');
+            if (this.client.mode === "master") {
+                playerelem.on('dragover', (e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add("dragover");
+                });
+                playerelem.on('dragleave', (e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove("dragover");
+                });
+                playerelem.on('drop', (e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove("dragover");
+                    let draggedPlayerId = e.originalEvent.dataTransfer.getData("playerId");
+                    let droppedPlayerId = player.id;
+                    window.sock.action("match_players", {p1id: draggedPlayerId, p2id: droppedPlayerId})
+                });
+            }
+
+            if (this.client.mode === "master") {
+                playerelem.attr("draggable", "true");
+                playerelem.on('dragstart', (e) => {
+                    e.originalEvent.dataTransfer.setData("playerId", player.id);
+                    kickplayerelem.attr('class', 'btn btn-outline-danger');
+                });
+                playerelem.on('dragend', (e) => {
+                    kickplayerelem.attr('class', 'd-none');
+                });
+            }
+        }
+
+        kickplayerelem.off('dragover');
+        kickplayerelem.off('dragleave');
+        kickplayerelem.off('drop');
+        if (this.client.mode === "master") {
+            kickplayerelem.on('dragover', (e) => {
+                e.preventDefault();
+                kickplayerelem.attr('class', 'btn btn-danger');
+            });
+            kickplayerelem.on('dragleave', (e) => {
+                e.preventDefault();
+                kickplayerelem.attr('class', 'btn btn-outline-danger');
+            });
+            kickplayerelem.on('drop', (e) => {
+                e.preventDefault();
+                kickplayerelem.attr('class', 'd-none');
+                let playerid = e.originalEvent.dataTransfer.getData("playerId");
+                window.sock.action("kick_player", { pid: playerid })
+            });
+        }
+    }
+
 
     renderGameBoard() {
         $(".player-turn-btn").attr('disabled', true);
