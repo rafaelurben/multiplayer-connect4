@@ -108,5 +108,9 @@ class WSConnect4Client(ABC):
                 ...
             case 'ready_response':
                 ...
+            case 'name_rejected':
+                raise ValueError("Name was rejected!")
+            case 'room_joined':
+                ...
             case _:  # default case
                 print(f"Action {action} not implemented!")
