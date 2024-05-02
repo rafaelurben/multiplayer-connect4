@@ -34,6 +34,10 @@ class GameServer(BasicServer):
             {"action": "game_created", "gameid": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
         await self.send_to_spectators(
             {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
+        await self.send_to_spectators(
+            {"action": "player_updated", "id": p1.id, "player": p1.as_dict()})
+        await self.send_to_spectators(
+            {"action": "player_updated", "id": p2.id, "player": p2.as_dict()})
 
         await self.send_to_one(
             {"action": "game_joined", "gameid": game.id, "opponent": p2.as_dict(), "board": game.p1board()}, p1.id)
@@ -73,6 +77,10 @@ class GameServer(BasicServer):
             {"action": "game_left", "gameid": game.id}, [game.p1.id, game.p2.id])
         await self.send_to_spectators(
             {"action": "game_deleted", "gameid": game.id})
+        await self.send_to_spectators(
+            {"action": "player_updated", "id": game.p1.id, "player": game.p1.as_dict()})
+        await self.send_to_spectators(
+            {"action": "player_updated", "id": game.p2.id, "player": game.p2.as_dict()})
 
     # Websocket actions
 
@@ -112,6 +120,7 @@ class GameServer(BasicServer):
             player.is_ready = not player.is_ready
             if player.is_ready:
                 await self.auto_match_if_enabled()
+            await self.send_to_spectators({'action': 'player_updated', "id": player.id, "player": player.as_dict()})
             return await ws.send_json({'action': 'ready_response', 'ready': player.is_ready})
         elif action == 'turn':
             player = Player.get(wsid)

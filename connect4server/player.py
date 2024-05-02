@@ -22,8 +22,10 @@ class Player:
 
     def as_dict(self) -> dict:
         return {
-            "name": self.name,
             "id": self.playerid,
+            "name": self.name,
+            "is_ready": self.is_ready,
+            "game_id": self.gameid,
         }
 
     def delete(self):

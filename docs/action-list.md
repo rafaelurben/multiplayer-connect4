@@ -28,6 +28,7 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 - game_state
 - game_deleted
 - player_joined
+- player_updated
 - player_left
 
 ## From Client to Server
