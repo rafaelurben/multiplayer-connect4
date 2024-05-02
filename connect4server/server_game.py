@@ -107,10 +107,10 @@ class GameServer(BasicServer):
         """Handle action sent from a joined player"""
 
         if action == 'leave_room':
-            log.info('[WS] #%s left the room! ("%s")',
-                     wsid, Player.get(wsid).name)
             player = Player.get(wsid)
             player.delete()
+            log.info('[WS] #%s left the room! ("%s")',
+                     player.id, player.name)
             if player.gameid:
                 await self.delete_game(Game.games[player.gameid])
             await self.send_to_spectators({'action': 'player_left', 'id': wsid})
@@ -225,6 +225,11 @@ class GameServer(BasicServer):
                 player.delete()
                 log.info('[WS] #%s was kicked from the room! ("%s")',
                          player.id, player.name)
+
+                # If the player was in a game, delete that game
+                if player.gameid:
+                    await self.delete_game(Game.games[player.gameid])
+
                 await self.send_to_spectators({'action': 'player_left', 'id': player.id})
                 await self.send_to_one({'action': 'room_left'}, player.id)
                 return await self.send_to_one(
@@ -326,13 +331,13 @@ class GameServer(BasicServer):
 
         if wsid in Player.everyone:
             player = Player.get(wsid)
+            player.delete()
             log.info('[WS] #%s ("%s") disconnected!', wsid, player.name)
 
             # If the player was in a game, delete that game
             if player.gameid:
                 await self.delete_game(Game.games[player.gameid])
 
-            player.delete()
             await self.send_to_spectators({'action': 'player_left', 'id': wsid})
         elif wsid in self.spectator_ids:
             log.info('[WS] #%s (spectator) disconnected!', wsid)
