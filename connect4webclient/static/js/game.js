@@ -120,16 +120,37 @@ class Game {
         let playerlistelem = $("#playerlist");
         playerlistelem.empty();
         for (let player of Object.values(this.players)) {
-            // Create a new player element if it doesn't exist
+            // Create a new player element
+            let player_state;
+            if (player.game_id !== null) {
+                player_state = `<span class="badge rounded-pill text-bg-danger">In game</span>`;
+            } else if (player.is_ready) {
+                player_state = `<span class="badge rounded-pill text-bg-success">Ready</span>`;
+            } else {
+                player_state = `<span class="badge rounded-pill text-bg-warning">Not ready</span>`;
+            }
+
             let playerelem = $(`<div id="playerlist_player${player.id}" class="playerlist_player rounded-3">
-                <i>(${player.id})</i> ${player.name}
+                <i>(${player.id})</i> ${player.name} ${player_state}
             </div>`);
             playerlistelem.append(playerelem);
 
+            // Remove & (re-)add drag events
             playerelem.off('dragover');
             playerelem.off('dragleave');
             playerelem.off('drop');
             if (this.client.mode === "master") {
+                // Make player draggable
+                playerelem.attr("draggable", "true");
+                playerelem.on('dragstart', (e) => {
+                    e.originalEvent.dataTransfer.setData("playerId", player.id);
+                    kickplayerelem.attr('class', 'btn btn-outline-danger');
+                });
+                playerelem.on('dragend', (e) => {
+                    kickplayerelem.attr('class', 'd-none');
+                });
+
+                // Update display on drag over
                 playerelem.on('dragover', (e) => {
                     e.preventDefault();
                     e.currentTarget.classList.add("dragover");
@@ -138,23 +159,14 @@ class Game {
                     e.preventDefault();
                     e.currentTarget.classList.remove("dragover");
                 });
+
+                // Drop
                 playerelem.on('drop', (e) => {
                     e.preventDefault();
                     e.currentTarget.classList.remove("dragover");
                     let draggedPlayerId = e.originalEvent.dataTransfer.getData("playerId");
                     let droppedPlayerId = player.id;
                     window.sock.action("match_players", {p1id: draggedPlayerId, p2id: droppedPlayerId})
-                });
-            }
-
-            if (this.client.mode === "master") {
-                playerelem.attr("draggable", "true");
-                playerelem.on('dragstart', (e) => {
-                    e.originalEvent.dataTransfer.setData("playerId", player.id);
-                    kickplayerelem.attr('class', 'btn btn-outline-danger');
-                });
-                playerelem.on('dragend', (e) => {
-                    kickplayerelem.attr('class', 'd-none');
                 });
             }
         }

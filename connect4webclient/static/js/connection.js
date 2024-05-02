@@ -128,6 +128,10 @@ class GameSocket {
                 this.game.players[json.id] = json.player;
                 break;
             }
+            case "player_updated": {
+                this.game.players[json.id] = {...this.game.players[json.id], ...json.player};
+                break;
+            }
             case "player_left": {
                 delete this.game.players[json.id];
                 break;
