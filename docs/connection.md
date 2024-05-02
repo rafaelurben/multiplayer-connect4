@@ -25,7 +25,7 @@ In default mode (currently the only one), the server waits for two players to be
 - Server sends game ID and [current board](#data-board) to client (`turn_request`)
 - Client answers with their column (number between 0 and 6) (`turn`)
 - Server validates turn or rejects it (`turn_accepted` or `invalid_turn`)
-- Server broadcasts new board to every spectator (`game_state`)
+- Server broadcasts new board to every spectator (`game_updated`)
 - If end of game is detected: [Game end](#game-end)
 - Else: (repeat for next player)
 

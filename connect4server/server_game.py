@@ -31,9 +31,9 @@ class GameServer(BasicServer):
         game = Game(p1, p2)
 
         await self.send_to_spectators(
-            {"action": "game_created", "gameid": game.id, "p1": p1.as_dict(), "p2": p2.as_dict()})
+            {"action": "game_created", "id": game.id, "game": game.as_dict()})
         await self.send_to_spectators(
-            {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
+            {"action": "game_updated", "id": game.id, "game": game.as_dict()})
         await self.send_to_spectators(
             {"action": "player_updated", "id": p1.id, "player": p1.as_dict()})
         await self.send_to_spectators(
@@ -76,7 +76,7 @@ class GameServer(BasicServer):
         await self.send_to_ids(
             {"action": "game_left", "gameid": game.id}, [game.p1.id, game.p2.id])
         await self.send_to_spectators(
-            {"action": "game_deleted", "gameid": game.id})
+            {"action": "game_deleted", "id": game.id})
         await self.send_to_spectators(
             {"action": "player_updated", "id": game.p1.id, "player": game.p1.as_dict()})
         await self.send_to_spectators(
@@ -154,8 +154,7 @@ class GameServer(BasicServer):
 
             await self.send_to_one(
                 {"action": "turn_accepted", "board": thisboard}, wsid)
-            await self.send_to_spectators(
-                {"action": "game_state", "gameid": game.id, "board": game.p1board(), "next": game.next_player})
+            await self.send_to_spectators({"action": "game_updated", "id": game.id, "game": game.as_dict()})
 
             if game.is_finished:  # if game ended
                 # Notify client if won, lost or tie
@@ -284,7 +283,8 @@ class GameServer(BasicServer):
                     'action': 'room_joined',
                     'mode': mode,
                     'auto_matching_enabled': self.auto_matching_enabled,
-                    'players': {p.id: p.as_dict() for p in Player.everyone.values()}
+                    'players': {p.id: p.as_dict() for p in Player.everyone.values()},
+                    'games': {g.id: g.as_dict() for g in Game.games.values()},
                 })
 
             return True

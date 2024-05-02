@@ -25,7 +25,7 @@ Format: `{"action": "<ACTION>", "arg1": "val1", "arg2": "val2"}`
 ### Server => Spectator
 
 - game_created
-- game_state
+- game_updated
 - game_deleted
 - player_joined
 - player_updated

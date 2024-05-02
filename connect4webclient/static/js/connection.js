@@ -73,6 +73,7 @@ class GameSocket {
                     this.ready();
                 } else {
                     this.game.players = json.players;
+                    this.game.games = json.games;
                 }
                 break;
             }
@@ -123,7 +124,7 @@ class GameSocket {
                 alert("Something went wrong as you were able to submit an invalid turn!");
                 break;
             }
-            // Server events
+            // Spectator events
             case "player_joined": {
                 this.game.players[json.id] = json.player;
                 break;
@@ -134,6 +135,18 @@ class GameSocket {
             }
             case "player_left": {
                 delete this.game.players[json.id];
+                break;
+            }
+            case "game_created": {
+                this.game.games[json.id] = json.game;
+                break;
+            }
+            case "game_updated": {
+                this.game.games[json.id] = {...this.game.games[json.id], ...json.game};
+                break;
+            }
+            case "game_deleted": {
+                this.game.games[json.id].is_finished = true;
                 break;
             }
             // Fallback

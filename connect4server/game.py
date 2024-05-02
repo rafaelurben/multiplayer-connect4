@@ -40,6 +40,17 @@ class Game:
     def id(self):
         return self.gameid
 
+    def as_dict(self) -> dict:
+        return {
+            "id": self.gameid,
+            "p1": self.p1.as_dict(),
+            "p2": self.p2.as_dict(),
+            "next_player": self.next_player,
+            "board": self.p1board(),
+            "is_finished": self.is_finished,
+            "winning_nr": self.winning_nr,
+        }
+
     def delete(self):
         del Game.games[self.gameid]
         if self.p1.gameid == self.gameid:

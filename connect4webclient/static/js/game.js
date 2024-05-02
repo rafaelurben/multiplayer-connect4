@@ -17,6 +17,7 @@ class Game {
         this.__game_board = undefined;
 
         this.players = {};
+        this.games = {}
 
         this.__state = undefined;
         this.__ready = false;
@@ -116,9 +117,11 @@ class Game {
     }
 
     renderSpectatorLobby() {
-        let kickplayerelem = $("#kick_player");
-        let playerlistelem = $("#playerlist");
-        playerlistelem.empty();
+        // Render player list
+
+        let kickPlayerElem = $("#kick_player");
+        let playerListElem = $("#player_list");
+        playerListElem.empty();
         for (let player of Object.values(this.players)) {
             // Create a new player element
             let player_state;
@@ -130,38 +133,38 @@ class Game {
                 player_state = `<span class="badge rounded-pill text-bg-warning">Not ready</span>`;
             }
 
-            let playerelem = $(`<div id="playerlist_player${player.id}" class="playerlist_player rounded-3">
+            let playerElem = $(`<div id="playerlist_player${player.id}" class="playerlist_player rounded-3">
                 <i>(${player.id})</i> ${player.name} ${player_state}
             </div>`);
-            playerlistelem.append(playerelem);
+            playerListElem.append(playerElem);
 
             // Remove & (re-)add drag events
-            playerelem.off('dragover');
-            playerelem.off('dragleave');
-            playerelem.off('drop');
+            playerElem.off('dragover');
+            playerElem.off('dragleave');
+            playerElem.off('drop');
             if (this.client.mode === "master") {
                 // Make player draggable
-                playerelem.attr("draggable", "true");
-                playerelem.on('dragstart', (e) => {
+                playerElem.attr("draggable", "true");
+                playerElem.on('dragstart', (e) => {
                     e.originalEvent.dataTransfer.setData("playerId", player.id);
-                    kickplayerelem.attr('class', 'btn btn-outline-danger');
+                    kickPlayerElem.attr('class', 'btn btn-outline-danger');
                 });
-                playerelem.on('dragend', (e) => {
-                    kickplayerelem.attr('class', 'd-none');
+                playerElem.on('dragend', (e) => {
+                    kickPlayerElem.attr('class', 'd-none');
                 });
 
                 // Update display on drag over
-                playerelem.on('dragover', (e) => {
+                playerElem.on('dragover', (e) => {
                     e.preventDefault();
                     e.currentTarget.classList.add("dragover");
                 });
-                playerelem.on('dragleave', (e) => {
+                playerElem.on('dragleave', (e) => {
                     e.preventDefault();
                     e.currentTarget.classList.remove("dragover");
                 });
 
                 // Drop
-                playerelem.on('drop', (e) => {
+                playerElem.on('drop', (e) => {
                     e.preventDefault();
                     e.currentTarget.classList.remove("dragover");
                     let draggedPlayerId = e.originalEvent.dataTransfer.getData("playerId");
@@ -171,24 +174,63 @@ class Game {
             }
         }
 
-        kickplayerelem.off('dragover');
-        kickplayerelem.off('dragleave');
-        kickplayerelem.off('drop');
+        kickPlayerElem.off('dragover');
+        kickPlayerElem.off('dragleave');
+        kickPlayerElem.off('drop');
         if (this.client.mode === "master") {
-            kickplayerelem.on('dragover', (e) => {
+            kickPlayerElem.on('dragover', (e) => {
                 e.preventDefault();
-                kickplayerelem.attr('class', 'btn btn-danger');
+                kickPlayerElem.attr('class', 'btn btn-danger');
             });
-            kickplayerelem.on('dragleave', (e) => {
+            kickPlayerElem.on('dragleave', (e) => {
                 e.preventDefault();
-                kickplayerelem.attr('class', 'btn btn-outline-danger');
+                kickPlayerElem.attr('class', 'btn btn-outline-danger');
             });
-            kickplayerelem.on('drop', (e) => {
+            kickPlayerElem.on('drop', (e) => {
                 e.preventDefault();
-                kickplayerelem.attr('class', 'd-none');
+                kickPlayerElem.attr('class', 'd-none');
                 let playerid = e.originalEvent.dataTransfer.getData("playerId");
                 window.sock.action("kick_player", { pid: playerid })
             });
+        }
+
+        // Render game list
+        let gameListElem = $("#game_list");
+        gameListElem.empty();
+        let sortedGames = Object.values(this.games).toSorted((a, b) => {
+            if (a.is_finished && b.is_finished) {
+                if (a.winning_nr === null) return 1;
+                if (b.winning_nr === null) return -1;
+                return (a.id - b.id);
+            } else if (a.is_finished) {
+                return 1;
+            } else if (b.is_finished) {
+                return -1;
+            }
+            return 0;
+        });
+
+        for (let game of sortedGames) {
+            // Create a new game element
+            let game_state;
+            if (game.is_finished && game.winning_nr === null) {
+                game_state = `<span class="badge rounded-pill text-bg-danger">Cancelled</span>`;
+            } else if (game.is_finished && game.winning_nr === 0) {
+                game_state = `<span class="badge rounded-pill text-bg-warning">Tie</span>`;
+            } else if (game.is_finished) {
+                let player_name = game.winning_nr === 1 ? game.p1.name : game.p2.name;
+                game_state = `<span class="badge rounded-pill text-bg-success">Winner: ${player_name}</span>`;
+            } else {
+                let player_name = game.next_player === 1 ? game.p1.name : game.p2.name;
+                game_state = `<span class="badge rounded-pill text-bg-info">Turn: ${player_name}</span>`;
+            }
+
+            let gameElem = $(`<div id="gamelist_game${game.id}" class="gamelist_game rounded-3">
+                <i>(${game.p1.id})</i> ${game.p1.name} vs. 
+                <i>(${game.p2.id})</i> ${game.p2.name}
+                ${game_state}
+            </div>`);
+            gameListElem.append(gameElem);
         }
     }
 
