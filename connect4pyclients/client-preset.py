@@ -9,8 +9,12 @@ Implementation: YOUR NAME - YEAR
 
 from client_base import WSConnect4Client
 
-NAME = None  # TODO: Enter your name
-URL = "ws://localhost:80/ws"  # TODO: Replace with server URL
+# TODO: Enter your name
+NAME = None
+
+# TODO: Switch comment to use local server
+URL = "wss://multiplayer-connect4-f88b5c5922e5.herokuapp.com/ws"
+# URL = "ws://localhost:80/ws"
 
 
 class CustomClient(WSConnect4Client):
@@ -25,6 +29,13 @@ class CustomClient(WSConnect4Client):
         # TODO: Replace this function body with your custom implementation!
 
         ...
+
+    async def wait_for_ready(self):
+        """By default, the client is not automatically ready to play!"""
+
+        # TODO: If your client should automatically be ready to play again, uncomment the following line
+
+        return input("Press enter to play again!")
 
 
 if __name__ == "__main__":
