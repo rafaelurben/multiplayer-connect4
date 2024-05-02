@@ -46,11 +46,11 @@ class GameSocket {
         switch (json.action) {
             case "ping": {
                 console.log("[WS] Ping received!")
-                break;
+                return;
             }
             case "alert": {
                 alert(json.message);
-                break;
+                return;
             }
             case "connected": {
                 this.game.client.id = json.id;
