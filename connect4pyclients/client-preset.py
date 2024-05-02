@@ -26,6 +26,9 @@ class CustomClient(WSConnect4Client):
         Board format: "0000000\n0000000\n0000000\n0000000\n0010000\n0120200"
         """
 
+        # Convert the board to a list of lists of integers
+        # board = [[int(char) for char in row] for row in board.split("\n")]
+
         # TODO: Replace this function body with your custom implementation!
 
         ...
