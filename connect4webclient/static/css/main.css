@@ -42,7 +42,12 @@
     display: grid;
     aspect-ratio: 7 / 7;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: 1.5fr repeat(6, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+}
+
+.board-table.spectator {
+    aspect-ratio: 6 / 7;
+    grid-template-rows: repeat(6, 1fr);
 }
 
 .board-table .board-header-cell {
@@ -52,7 +57,8 @@
 
 .board-table .board-header-cell .player-turn-btn {
     flex-grow: 1;
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: 5px;
 }
 
 .board-table .board-cell {

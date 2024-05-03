@@ -190,7 +190,7 @@ class Game {
                 e.preventDefault();
                 kickPlayerElem.attr('class', 'd-none');
                 let playerid = e.originalEvent.dataTransfer.getData("playerId");
-                window.sock.action("kick_player", { pid: playerid })
+                window.sock.action("kick_player", {pid: playerid})
             });
         }
 
@@ -234,49 +234,12 @@ class Game {
         }
     }
 
-
     renderGameBoard() {
-        $(".player-turn-btn").attr('disabled', true);
-
         let $table = $("#player-board-table");
-        $table.children().remove('.board-cell');
-        $table.append(...this.getRenderedBoardCells());
-    }
-
-    getRenderedBoardCells() {
-        let canPlay = this.client.mode === "player" && this.state === "ingame_turn";
-
-        let resultCells = [];
-        let boardRows = this.game_board.trim().split("\n");
-
-        // Keep track of whether a column has already had a coin in it
-        let colsHaveCoins = new Array(boardRows[0].length).fill(false);
-
-        // Loop through the board rows in reverse order (start from bottom to find first empty cell)
-        for (let rowIndex = boardRows.length - 1; rowIndex >= 0; rowIndex--) {
-            let boardRow = boardRows[rowIndex].trim();
-
-            for (let colIndex = boardRow.length - 1; colIndex >= 0; colIndex--) {
-                let teamNum = boardRow[colIndex];
-
-                let $cell = $("<td>", {class: "board-cell"});
-                let $coin = $('<div>', {class: `board-coin t${teamNum}-bg`});
-
-                if (canPlay && teamNum === "0") {
-                    if (!colsHaveCoins[colIndex]) {
-                        $coin.addClass('board-coin-clickable');
-                        $cell.on('click', () => {sock.turn(colIndex)});
-                        colsHaveCoins[colIndex] = true;
-
-                        // enable corresponding column button
-                        $(`.player-turn-btn[data-col="${colIndex}"]`).prop('disabled', false);
-                    }
-                }
-
-                $cell.append($coin);
-                resultCells.unshift($cell);
-            }
-        }
-        return resultCells;
+        $table.empty();
+        $table.append(...renderBoardCells(this.game_board, {
+            canPlay: this.state === "ingame_turn",
+            spectator: this.client.mode !== "player" || this.state.startsWith("ended")
+        }));
     }
 }

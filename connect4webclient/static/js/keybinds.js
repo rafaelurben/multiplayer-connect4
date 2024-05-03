@@ -23,27 +23,27 @@ function setupKeybinds(socket) {
             socket.leave();
         } else if (event.key === "q") {
             // q: Show QR code
-            $("#show_qrcode:not(:disabled)").click();
+            $("#show_qrcode:not(:disabled):visible").click();
         } else if (event.key === "r") {
             // r: Ready
-            $("#player-ready-btn:not(:disabled)").click();
+            $("#player-ready-btn:not(:disabled):visible").click();
         } else if (event.key === "a") {
             // a: Toggle auto matching
-            $("#toggle_auto_matching:not(:disabled)").click();
+            $("#toggle_auto_matching:not(:disabled):visible").click();
         } else if (event.key === "1") {
-            $('.player-turn-btn[data-col="0"]:not(:disabled)').click()
+            $('.player-turn-btn[data-col="0"]:not(:disabled):visible').click()
         } else if (event.key === "2") {
-            $('.player-turn-btn[data-col="1"]:not(:disabled)').click()
+            $('.player-turn-btn[data-col="1"]:not(:disabled):visible').click()
         } else if (event.key === "3") {
-            $('.player-turn-btn[data-col="2"]:not(:disabled)').click()
+            $('.player-turn-btn[data-col="2"]:not(:disabled):visible').click()
         } else if (event.key === "4") {
-            $('.player-turn-btn[data-col="3"]:not(:disabled)').click()
+            $('.player-turn-btn[data-col="3"]:not(:disabled):visible').click()
         } else if (event.key === "5") {
-            $('.player-turn-btn[data-col="4"]:not(:disabled)').click()
+            $('.player-turn-btn[data-col="4"]:not(:disabled):visible').click()
         } else if (event.key === "6") {
-            $('.player-turn-btn[data-col="5"]:not(:disabled)').click()
+            $('.player-turn-btn[data-col="5"]:not(:disabled):visible').click()
         } else if (event.key === "7") {
-            $('.player-turn-btn[data-col="6"]:not(:disabled)').click()
+            $('.player-turn-btn[data-col="6"]:not(:disabled):visible').click()
         } else {
             return;
         }
