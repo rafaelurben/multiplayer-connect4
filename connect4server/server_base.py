@@ -91,7 +91,7 @@ class BasicServer:
 
         # Set up the websocket connection
 
-        ws_current = web.WebSocketResponse()
+        ws_current = web.WebSocketResponse(heartbeat=25)
         wsid = self.get_next_id()
 
         await ws_current.prepare(request)
