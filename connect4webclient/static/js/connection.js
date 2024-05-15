@@ -143,10 +143,16 @@ class GameSocket {
             }
             case "game_updated": {
                 this.game.games[json.id] = {...this.game.games[json.id], ...json.game};
+                if (this.game.game_watching_id === json.game.id) {
+                    this.game.renderWatchedGame();
+                }
                 break;
             }
             case "game_deleted": {
                 this.game.games[json.id].is_finished = true;
+                if (this.game.game_watching_id === json.game.id) {
+                    this.game.renderWatchedGame();
+                }
                 break;
             }
             // Fallback

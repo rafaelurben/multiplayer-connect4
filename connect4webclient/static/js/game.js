@@ -17,7 +17,9 @@ class Game {
         this.__game_board = undefined;
 
         this.players = {};
-        this.games = {}
+        this.games = {};
+
+        this.__watched_game_id = undefined;
 
         this.__state = undefined;
         this.__ready = false;
@@ -32,6 +34,15 @@ class Game {
     set state(value) {
         this.__state = value;
         this.updateUi();
+    }
+
+    get watched_game_id() {
+        return this.__watched_game_id;
+    }
+
+    set watched_game_id(value) {
+        this.__watched_game_id = value;
+        this.renderWatchedGame();
     }
 
     get ready() {
@@ -240,6 +251,19 @@ class Game {
         $table.append(...renderBoardCells(this.game_board, {
             canPlay: this.state === "ingame_turn",
             spectator: this.client.mode !== "player" || this.state.startsWith("ended")
+        }));
+    }
+
+    renderWatchedGame() {
+        let game = this.games[this.watched_game_id];
+        $("#spectatorWatchGameModal").modal('show');
+        $("#spectatorWatchGameTitle").text(`Watching game #${game.id}`);
+
+        let $table = $(`#spectatorWatchGameBoardTable`);
+        $table.empty();
+        $table.append(...renderBoardCells(this.game_board, {
+            canPlay: false,
+            spectator: true
         }));
     }
 }

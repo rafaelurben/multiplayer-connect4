@@ -19,147 +19,183 @@
 </head>
 
 <body data-bs-theme="dark">
-    <!-- Content -->
-    <div class="w-100 h-100 d-flex flex-column">
-        <!-- Menubar / Header -->
-        <div id="menubar" class="w-100 p-2 m-0 d-flex flex-row border-bottom align-items-center">
-            <div class="me-3">
-                <h3 class="mb-0 d-block">Connect4</h3>
-            </div>
-            <div class="flex-grow-1 text-end me-1">
-                <span id="header_status">Not connected</span>
-            </div>
-            <div class="modeblock mode_player mode_spectator mode_master hidden">
-                <button class="btn btn-danger ms-2" onclick="sock.leave()" title="Leave lobby">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-                        <path style="fill:white" d="M160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96C43 32 0 75 0 128V384c0 53 43 96 96 96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H96c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32h64zM504.5 273.4c4.8-4.5 7.5-10.8 7.5-17.4s-2.7-12.9-7.5-17.4l-144-136c-7-6.6-17.2-8.4-26-4.6s-14.5 12.5-14.5 22v72H192c-17.7 0-32 14.3-32 32l0 64c0 17.7 14.3 32 32 32H320v72c0 9.6 5.7 18.2 14.5 22s19 2 26-4.6l144-136z" />
-                    </svg>
-                </button>
-            </div>
-            <div class="modeblock mode_player mode_spectator mode_master mode_connected">
-                <button id="show_qrcode" disabled class="btn btn-light ms-2 hidden" data-bs-toggle="modal" data-bs-target="#qrcontainer" title="Show QR code">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                        <!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-                        <path style="fill:black" d="M48 32C21.5 32 0 53.5 0 80v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H48zm80 64v64H64V96h64zM48 288c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48V336c0-26.5-21.5-48-48-48H48zm80 64v64H64V352h64zM256 80v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H304c-26.5 0-48 21.5-48 48zm64 16h64v64H320V96zm32 352v32h32V448H352zm96 0H416v32h32V448zM416 288v32H352V288H256v96 96h64V384h32v32h96V352 320 288H416z" />
-                    </svg>
-                </button>
-            </div>
+<!-- Content -->
+<div class="w-100 h-100 d-flex flex-column">
+    <!-- Menubar / Header -->
+    <div id="menubar" class="w-100 p-2 m-0 d-flex flex-row border-bottom align-items-center">
+        <div class="me-3">
+            <h3 class="mb-0 d-block">Connect4</h3>
         </div>
-        <!-- Maincontent -->
-        <div id="maincontent" class="d-flex flex-wrap flex-grow-1">
-            <!-- Connect screen -->
-            <div class="modeblock mode_connected hidden p-3">
-                <div class="row row-cols-lg-auto g-3 align-items-center">
-                    <div class="col-12">
-                        <button class="btn btn-light w-100" onclick="sock.joinAsSpectator()">Connect as spectator</button>
-                    </div>
-                    <div class="col-12">
-                        <form id="lobby_join_player_form" class="input-group" onsubmit="event.preventDefault(); sock.joinAsPlayer()">
-                            <input id="nameinput" class="form-control" type="text" name="name" placeholder="Enter your name" pattern="^[a-zA-Z0-9_\- ]{3,20}$" maxlength="20" required>
-                            <input type="submit" class="btn btn-primary" value="Join as player">
-                        </form>
-                    </div>
+        <div class="flex-grow-1 text-end me-1">
+            <span id="header_status">Not connected</span>
+        </div>
+        <div class="modeblock mode_player mode_spectator mode_master hidden">
+            <button class="btn btn-danger ms-2" onclick="sock.leave()" title="Leave lobby">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                    <path style="fill:white"
+                          d="M160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96C43 32 0 75 0 128V384c0 53 43 96 96 96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H96c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32h64zM504.5 273.4c4.8-4.5 7.5-10.8 7.5-17.4s-2.7-12.9-7.5-17.4l-144-136c-7-6.6-17.2-8.4-26-4.6s-14.5 12.5-14.5 22v72H192c-17.7 0-32 14.3-32 32l0 64c0 17.7 14.3 32 32 32H320v72c0 9.6 5.7 18.2 14.5 22s19 2 26-4.6l144-136z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="modeblock mode_player mode_spectator mode_master mode_connected">
+            <button id="show_qrcode" disabled class="btn btn-light ms-2 hidden" data-bs-toggle="modal"
+                    data-bs-target="#qrcontainer" title="Show QR code">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                    <path style="fill:black"
+                          d="M48 32C21.5 32 0 53.5 0 80v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H48zm80 64v64H64V96h64zM48 288c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48V336c0-26.5-21.5-48-48-48H48zm80 64v64H64V352h64zM256 80v96c0 26.5 21.5 48 48 48h96c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H304c-26.5 0-48 21.5-48 48zm64 16h64v64H320V96zm32 352v32h32V448H352zm96 0H416v32h32V448zM416 288v32H352V288H256v96 96h64V384h32v32h96V352 320 288H416z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <!-- Maincontent -->
+    <div id="maincontent" class="d-flex flex-wrap flex-grow-1">
+        <!-- Connect screen -->
+        <div class="modeblock mode_connected hidden p-3">
+            <div class="row row-cols-lg-auto g-3 align-items-center">
+                <div class="col-12">
+                    <button class="btn btn-light w-100" onclick="sock.joinAsSpectator()">Connect as spectator</button>
+                </div>
+                <div class="col-12">
+                    <form id="lobby_join_player_form" class="input-group"
+                          onsubmit="event.preventDefault(); sock.joinAsPlayer()">
+                        <input id="nameinput" class="form-control" type="text" name="name" placeholder="Enter your name"
+                               pattern="^[a-zA-Z0-9_\- ]{3,20}$" maxlength="20" required>
+                        <input type="submit" class="btn btn-primary" value="Join as player">
+                    </form>
                 </div>
             </div>
-            <!-- Player screen -->
-            <div id="player-screen" class="modeblock mode_player hidden d-flex flex-column">
-                <!-- Game -->
-                <div id="block-player-game" class="stateblock state_ingame_waiting state_ingame_turn state_ended state_ended_result d-flex flex-column flex-grow-1 gap-2">
+        </div>
+        <!-- Player screen -->
+        <div id="player-screen" class="modeblock mode_player hidden d-flex flex-column">
+            <!-- Game -->
+            <div id="block-player-game"
+                 class="stateblock state_ingame_waiting state_ingame_turn state_ended state_ended_result d-flex flex-column flex-grow-1 gap-2">
                     <span class="m-2">Your opponent: <b class="t2-fg" id="player-opponent"></b>.
                         <i class="stateblock state_ingame_turn">It's <span class="t1-fg">your turn!</span></i>
                         <i class="stateblock state_ingame_waiting">It's your <span class="t2-fg">opponent's turn!</span></i>
                     </span>
-                    <div id="player-board-table-container" class="d-flex align-items-center justify-content-center flex-grow-1">
-                        <div id="player-board-table" class="board-table">
-                            <!-- Added by JS -->
+                <div id="player-board-table-container"
+                     class="d-flex align-items-center justify-content-center flex-grow-1">
+                    <div id="player-board-table" class="board-table">
+                        <!-- Added by JS -->
+                    </div>
+                </div>
+            </div>
+            <!-- Initial join -->
+            <div class="stateblock state_initial_join m-2 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                <h4 class="text-center">Hey there!</h4>
+                <span class="text-center">As long as you're ready (see button below), you'll be automatically matched with another player!</span>
+            </div>
+            <!-- Game end / leaderboard -->
+            <div class="stateblock state_ended state_ended_result m-2 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+                <h4 class="text-center" id="player-result"></h4>
+                <span class="text-center">This game has reached its end.</span>
+            </div>
+            <!-- Menu bar -->
+            <div class="stateblock state_ended state_ended_result state_initial_join d-flex flex-row flex-wrap gap-2 p-2 mt-auto">
+                <div id="player-ready-display" class="p-1">
+                    <span><b>You're ready</b> - <span
+                            id="player-waiting-text">Waiting for another player...</span></span>
+                </div>
+                <button class="btn ms-auto" id="player-ready-btn" onclick="sock.ready()">
+                    Ready
+                </button>
+            </div>
+        </div>
+        <!-- Spectator/Master screen -->
+        <div class="modeblock mode_spectator mode_master hidden p-0 d-flex">
+            <div class="d-flex flex-column flex-grow-1">
+                <div class="flex-grow-1 d-flex justify-content-center flex-column flex-md-row">
+                    <!-- Player list -->
+                    <div class="gap-2 m-2 d-flex flex-grow-1 flex-column">
+                        <h4>Players</h4>
+                        <div id="player_list" class="gap-2 m-2 flex-grow-1 fs-5">
+                            <!-- content is created in game.js -->
+                        </div>
+                    </div>
+                    <!-- Games list -->
+                    <div class="gap-2 m-2 d-flex flex-grow-1 flex-column">
+                        <h4>Games</h4>
+                        <div id="game_list" class="gap-2 m-2 flex-grow-1 fs-5">
+                            <!-- content is created in game.js -->
                         </div>
                     </div>
                 </div>
-                <!-- Initial join -->
-                <div class="stateblock state_initial_join m-2 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-                    <h4 class="text-center">Hey there!</h4>
-                    <span class="text-center">As long as you're ready (see button below), you'll be automatically matched with another player!</span>
-                </div>
-                <!-- Game end / leaderboard -->
-                <div class="stateblock state_ended state_ended_result m-2 flex-grow-1 d-flex flex-column justify-content-center align-items-center">
-                    <h4 class="text-center" id="player-result"></h4>
-                    <span class="text-center">This game has reached its end.</span>
-                </div>
-                <!-- Menu bar -->
-                <div class="stateblock state_ended state_ended_result state_initial_join d-flex flex-row flex-wrap gap-2 p-2 mt-auto">
-                    <div id="player-ready-display" class="p-1">
-                        <span><b>You're ready</b> - <span id="player-waiting-text">Waiting for another player...</span></span>
-                    </div>
-                    <button class="btn ms-auto" id="player-ready-btn" onclick="sock.ready()">
-                        Ready
+                <!-- Master control bar -->
+                <div id="master-controls" class="modeblock mode_master d-flex flex-row flex-wrap gap-2 p-2">
+                    <button id="toggle_auto_matching" class="btn" onclick="sock.action('toggle_auto_matching')">Toggle
+                        <u>a</u>uto matching
+                    </button>
+                    <button id="kick_player" class="d-none">
+                        Kick player
+                        <svg class="icon ms-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                            <!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                            <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/>
+                        </svg>
                     </button>
                 </div>
             </div>
-            <!-- Spectator/Master screen -->
-            <div class="modeblock mode_spectator mode_master hidden p-0 d-flex">
-                <div class="d-flex flex-column flex-grow-1">
-                    <div class="flex-grow-1 d-flex justify-content-center flex-column flex-md-row">
-                        <!-- Player list -->
-                        <div class="gap-2 m-2 d-flex flex-grow-1 flex-column">
-                            <h4>Players</h4>
-                            <div id="player_list" class="gap-2 m-2 flex-grow-1 fs-5">
-                                <!-- content is created in game.js -->
+
+            <!-- Game watch modal -->
+            <div class="modal fade" id="spectatorWatchGameModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                 aria-labelledby="spectatorWatchGameTitle" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="spectatorWatchGameTitle"></h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="spectatorWatchGameBoardContainer"
+                                 class="d-flex align-items-center justify-content-center flex-grow-1">
+                                <div id="spectatorWatchGameBoardTable" class="board-table">
+                                    <!-- Added by JS -->
+                                </div>
                             </div>
                         </div>
-                        <!-- Games list -->
-                        <div class="gap-2 m-2 d-flex flex-grow-1 flex-column">
-                            <h4>Games</h4>
-                            <div id="game_list" class="gap-2 m-2 flex-grow-1 fs-5">
-                                <!-- content is created in game.js -->
-                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Understood</button>
                         </div>
-                    </div>
-                    <!-- Master control bar -->
-                    <div id="master-controls" class="modeblock mode_master d-flex flex-row flex-wrap gap-2 p-2">
-                        <button id="toggle_auto_matching" class="btn" onclick="sock.action('toggle_auto_matching')">Toggle <u>a</u>uto matching</button>
-                        <button id="kick_player" class="d-none">
-                            Kick player
-                            <svg class="icon ms-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-                                <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" />
-                            </svg>
-                        </button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+</div>
 
-    <!-- QR code modal -->
-    <div id="qrcontainer" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-dark">
-                    <h5 class="modal-title">Join the game</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+<!-- QR code modal -->
+<div id="qrcontainer" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h5 class="modal-title">Join the game</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
-                <div class="modal-body bg-dark">
-                    <p>
-                        Scan the QR code or
-                        <a id="qrcode_link" class="text-light" href="" target="_blank">copy this link</a>
-                        to join the lobby.
-                    </p>
-                    <img id="qrcode_image" class="w-100">
-                </div>
+            <div class="modal-body bg-dark">
+                <p>
+                    Scan the QR code or
+                    <a id="qrcode_link" class="text-light" href="" target="_blank">copy this link</a>
+                    to join the lobby.
+                </p>
+                <img id="qrcode_image" class="w-100">
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Scripts -->
-    <script>
-        window.addEventListener("load", function() {
-            window.game = new Game();
-            window.sock = new GameSocket(window.game);
-            setupKeybinds(window.sock);
-        });
-    </script>
+<!-- Scripts -->
+<script>
+    window.addEventListener("load", function () {
+        window.game = new Game();
+        window.sock = new GameSocket(window.game);
+        setupKeybinds(window.sock);
+    });
+</script>
 </body>
 
 </html>
