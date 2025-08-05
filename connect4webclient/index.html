@@ -111,14 +111,14 @@
                     <!-- Player list -->
                     <div class="gap-2 m-2 d-flex flex-grow-1 flex-column">
                         <h4>Players</h4>
-                        <div id="player_list" class="gap-2 m-2 flex-grow-1 fs-5">
+                        <div id="player_list" class="d-flex flex-column gap-2 m-2 flex-grow-1 fs-5">
                             <!-- content is created in game.js -->
                         </div>
                     </div>
                     <!-- Games list -->
                     <div class="gap-2 m-2 d-flex flex-grow-1 flex-column">
                         <h4>Games</h4>
-                        <div id="game_list" class="gap-2 m-2 flex-grow-1 fs-5">
+                        <div id="game_list" class="d-flex flex-column gap-2 m-2 flex-grow-1 fs-5">
                             <!-- content is created in game.js -->
                         </div>
                     </div>
@@ -148,16 +148,20 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            <p class="mb-3">
+                                <b class="t1-fg" id="spectatorPlayer1"></b> vs.
+                                <b class="t2-fg" id="spectatorPlayer2"></b> -
+                                <span id="spectatorGameStatus"></span>
+                            </p>
                             <div id="spectatorWatchGameBoardContainer"
                                  class="d-flex align-items-center justify-content-center flex-grow-1">
-                                <div id="spectatorWatchGameBoardTable" class="board-table">
+                                <div id="spectatorWatchGameBoardTable" class="board-table flex-grow-1">
                                     <!-- Added by JS -->
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Understood</button>
                         </div>
                     </div>
                 </div>

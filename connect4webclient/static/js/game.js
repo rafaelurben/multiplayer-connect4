@@ -236,10 +236,14 @@ class Game {
                 game_state = `<span class="badge rounded-pill text-bg-info">Turn: ${player_name}</span>`;
             }
 
+            let spectate_button = `<button class="btn btn-sm btn-outline-primary float-end" onclick="window.game.watched_game_id = ${game.id}">Watch</button>`;
+
             let gameElem = $(`<div id="gamelist_game${game.id}" class="gamelist_game rounded-3">
-                <i>(${game.p1.id})</i> ${game.p1.name} vs. 
-                <i>(${game.p2.id})</i> ${game.p2.name}
+                #${game.id}:
+                ${game.p1.name} <i>(${game.p1.id})</i>  vs. 
+                ${game.p2.name} <i>(${game.p2.id})</i>
                 ${game_state}
+                ${spectate_button}
             </div>`);
             gameListElem.append(gameElem);
         }
@@ -256,12 +260,16 @@ class Game {
 
     renderWatchedGame() {
         let game = this.games[this.watched_game_id];
+        console.log("Rendering watched game:", game);
         $("#spectatorWatchGameModal").modal('show');
         $("#spectatorWatchGameTitle").text(`Watching game #${game.id}`);
+        $("#spectatorPlayer1").text(`${game.p1.name} (#${game.p1.id})`);
+        $("#spectatorPlayer2").text(`${game.p2.name} (#${game.p2.id})`);
+        $("#spectatorGameStatus").text(game.is_finished ? "Finished" : "In progress");
 
         let $table = $(`#spectatorWatchGameBoardTable`);
         $table.empty();
-        $table.append(...renderBoardCells(this.game_board, {
+        $table.append(...renderBoardCells(game.board, {
             canPlay: false,
             spectator: true
         }));
