@@ -31,7 +31,6 @@ function renderBoardCells(board, {canPlay = false, spectator = true}) {
     }
 
     // Add buttons on top
-    console.log(spectator)
     if (!spectator) {
         for (let i = colsButtonAdded.length - 1; i >= 0; i--) {
             let disabledAttr = canPlay && colsButtonAdded[i] ? "" : "disabled";
